@@ -5,6 +5,9 @@ import { logger } from './utils/logging.js';
 import { sanitizeInput } from './api/middleware/sanitization.js';
 import { errorHandler, notFoundHandler } from './api/middleware/errorHandler.js';
 import { rateLimiter } from './api/middleware/rateLimiter.js';
+import searchRoutes from './api/routes/search.js';
+import birdsRoutes from './api/routes/birds.js';
+import taxonomyRoutes from './api/routes/taxonomy.js';
 
 config();
 
@@ -23,7 +26,12 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// API routes will be added here
+// API routes
+app.use('/api', searchRoutes);
+app.use('/api', birdsRoutes);
+app.use('/api', taxonomyRoutes);
+
+// API root endpoint
 app.get('/api', (_req, res) => {
   res.json({
     message: 'BirdMate API',
@@ -31,7 +39,10 @@ app.get('/api', (_req, res) => {
     endpoints: [
       'GET /health',
       'GET /api',
-      // More endpoints will be added by user stories
+      'POST /api/v1/search',
+      'GET /api/v1/birds',
+      'GET /api/v1/birds/:id',
+      'GET /api/v1/taxonomy',
     ],
   });
 });

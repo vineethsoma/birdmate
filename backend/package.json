@@ -8,7 +8,11 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "migrate": "node --loader ts-node/esm src/db/migrations/run.ts",
-    "seed": "node --loader ts-node/esm src/db/seeds/run.ts"
+    "seed": "npm run download:taxonomy && npm run seed:taxonomy && npm run fetch:images && npm run generate:embeddings",
+    "download:taxonomy": "vite-node src/db/seeds/downloadTaxonomy.ts",
+    "seed:taxonomy": "vite-node src/db/seeds/seedTaxonomy.ts",
+    "fetch:images": "vite-node src/db/seeds/fetchImages.ts",
+    "generate:embeddings": "vite-node src/db/seeds/generateEmbeddings.ts"
   },
   "dependencies": {
     "express": "^4.18.2",

@@ -84,23 +84,23 @@
 
 ### Implementation for User Story 1
 
-- [ ] T032 [P] [US1] Create Bird entity model in backend/src/models/Bird.ts with validation rules (eBirdCode unique, description ≥50 chars, at least one field mark)
-- [ ] T033 [P] [US1] Create SearchQuery entity model in backend/src/models/SearchQuery.ts with sanitization and normalization logic (1-500 chars, XSS prevention)
-- [ ] T034 [P] [US1] Create TaxonomyMetadata entity model in backend/src/models/TaxonomyMetadata.ts with version validation
-- [ ] T035 [US1] Implement OpenAI embeddings wrapper in backend/src/utils/embeddings.ts using text-embedding-3-small model
-- [ ] T036 [US1] Implement cosine similarity function in backend/src/utils/similarity.ts for vector comparison
-- [ ] T037 [US1] Implement SearchService in backend/src/services/SearchService.ts with methods: generateEmbedding(), searchBySimilarity(), rankResults() (depends on T035, T036)
-- [ ] T038 [US1] Implement BirdService in backend/src/services/BirdService.ts with methods: getBirdById(), getAllBirds(), getBirdImages()
-- [ ] T039 [US1] Implement LoggingService in backend/src/services/LoggingService.ts to log all queries with timestamp, query text, top-3 results per FR-015
-- [ ] T040 [US1] Implement POST /api/v1/search endpoint in backend/src/api/routes/search.ts calling SearchService and LoggingService (depends on T037, T039)
-- [ ] T041 [US1] Implement GET /api/v1/taxonomy endpoint in backend/src/api/routes/taxonomy.ts returning taxonomy version per FR-016
-- [ ] T042 [P] [US1] Create SearchBox React component in frontend/src/components/SearchBox.tsx with input field, submit button, validation (1-500 chars)
-- [ ] T043 [P] [US1] Create BirdCard React component in frontend/src/components/BirdCard.tsx displaying thumbnail, common name, scientific name, 1-2 field marks
-- [ ] T044 [US1] Create SearchResults React component in frontend/src/components/SearchResults.tsx rendering grid of BirdCard components with loading and empty states
-- [ ] T045 [US1] Create useSearch custom hook in frontend/src/hooks/useSearch.ts using TanStack Query to call POST /search with caching
-- [ ] T046 [US1] Create HomePage component in frontend/src/pages/HomePage.tsx composing SearchBox and SearchResults with URL state persistence and result caching for back button support (pre-populates search box and shows cached results per FR-011)
-- [ ] T047 [US1] Add loading spinner component in frontend/src/components/shared/Loading.tsx displayed during search processing (per FR-012)
-- [ ] T048 [US1] Add responsive CSS for mobile (320px) to desktop (1920px) in frontend/src/styles/ ensuring no horizontal scroll (per FR-009, SC-005)
+- [x] T032 [P] [US1] Create Bird entity model in backend/src/models/Bird.ts with validation rules (eBirdCode unique, description ≥50 chars, at least one field mark)
+- [x] T033 [P] [US1] Create SearchQuery entity model in backend/src/models/SearchQuery.ts with sanitization and normalization logic (1-500 chars, XSS prevention)
+- [x] T034 [P] [US1] Create TaxonomyMetadata entity model in backend/src/models/TaxonomyMetadata.ts with version validation
+- [x] T035 [US1] Implement OpenAI embeddings wrapper in backend/src/utils/embeddings.ts using text-embedding-3-small model
+- [x] T036 [US1] Implement cosine similarity function in backend/src/utils/similarity.ts for vector comparison
+- [x] T037 [US1] Implement SearchService in backend/src/services/SearchService.ts with methods: generateEmbedding(), searchBySimilarity(), rankResults() (depends on T035, T036)
+- [x] T038 [US1] Implement BirdService in backend/src/services/BirdService.ts with methods: getBirdById(), getAllBirds(), getBirdImages()
+- [x] T039 [US1] Implement LoggingService in backend/src/services/LoggingService.ts to log all queries with timestamp, query text, top-3 results per FR-015
+- [x] T040 [US1] Implement POST /api/v1/search endpoint in backend/src/api/routes/search.ts calling SearchService and LoggingService (depends on T037, T039)
+- [x] T041 [US1] Implement GET /api/v1/taxonomy endpoint in backend/src/api/routes/taxonomy.ts returning taxonomy version per FR-016
+- [x] T042 [P] [US1] Create SearchBox React component in frontend/src/components/SearchBox.tsx with input field, submit button, validation (1-500 chars)
+- [x] T043 [P] [US1] Create BirdCard React component in frontend/src/components/BirdCard.tsx displaying thumbnail, common name, scientific name, 1-2 field marks
+- [x] T044 [US1] Create SearchResults React component in frontend/src/components/SearchResults.tsx rendering grid of BirdCard components with loading and empty states
+- [x] T045 [US1] Create useSearch custom hook in frontend/src/hooks/useSearch.ts using TanStack Query to call POST /search with caching
+- [x] T046 [US1] Create HomePage component in frontend/src/pages/HomePage.tsx composing SearchBox and SearchResults with URL state persistence and result caching for back button support (pre-populates search box and shows cached results per FR-011)
+- [x] T047 [US1] Add loading spinner component in frontend/src/components/shared/Loading.tsx displayed during search processing (per FR-012)
+- [x] T048 [US1] Add responsive CSS for mobile (320px) to desktop (1920px) in frontend/src/styles/ ensuring no horizontal scroll (per FR-009, SC-005)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can search, see results, and tests validate 90% accuracy on curated queries
 
