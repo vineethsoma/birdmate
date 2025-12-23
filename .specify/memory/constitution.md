@@ -1,50 +1,103 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+==================
+Version Change: 2.0.0 → 2.1.0 (MINOR: Added build toolchain specification)
+Modified Sections:
+  - Architecture & Tech Stack: Added Vite + Vitest as official toolchain
+  - Development Workflow: Updated testing references to use Vitest
+Added Guidance: Build tooling standardized on Vite ecosystem
+Principles Unchanged: All 5 core principles remain intact
+Templates Requiring Updates:
+  ✅ .specify/templates/plan-template.md (updated for Vite patterns)
+  ✅ .specify/templates/tasks-template.md (updated for Vitest testing)
+Follow-up: None
+-->
+
+# Birdmate Constitution
+
+**Birdmate** is a natural language bird search engine that helps users discover bird species by describing what they see or hear. This constitution establishes non-negotiable principles for development, testing, and deployment.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Natural Language First
+Every search interface MUST accept human-readable descriptions (color, size, behavior, habitat, song characteristics) as first-class input. Bird data enrichment and index design are driven by user-query patterns, not technical convenience. No query syntax required—plain English only.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Users are birdwatchers, not developers. The system serves field observers who may describe birds only by "red chest with grey back" or "sounds like a drum roll."
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Accurate Bird Taxonomy
+All bird records MUST reference authoritative taxonomic sources (eBird, Cornell Lab taxonomy, or equivalent). When conflicting data exists across sources, flag ambiguity to the user; never silently merge or prioritize sources without documentation. Synonyms and regional names are cross-referenced for discoverability.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Ornithology is precise. A "robin" in North America differs from a European robin. Accuracy builds trust with expert users.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Test-First & Field-Validated (NON-NEGOTIABLE)
+TDD mandatory: Write tests covering query intent → User approves expected results → Run tests (fail) → Implement → Tests pass. Integration tests simulate real field conditions (e.g., "red head, yellow eye" must match breeding-plumage variants). Searches tested against curated queries from actual birdwatchers.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: False positives in bird ID cause frustration and misled observations.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Observability & Audit Trail
+Every search query logged with user intent, normalized description, and top-3 results returned. Logging MUST include: query timestamp, user location (optional), results matched, confidence scores. Failed or ambiguous queries tracked for future index improvements. No PII logged without explicit consent.
+API First
+Ship as web application with RESTful API backend; UI MUST accept plain text input (search box), API returns JSON (structured). API endpoints designed for composability and external integrations. Dependencies kept minimal; use embedded bird database (JSON or lightweight DB) unless scale demands external service.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Simplicity enables rapid iteration; API-first design ensures accessibility for scripts, mobile apps, and future integrations.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Architecture & Tech Stack
+
+- **Frontend**: React + TypeScript (type-safe UI components)
+- **Backend**: Node.js + TypeScript (type-safe API layer)
+- **Search Engine**: Vector embeddings (OpenAI, Sentence Transformers via TypeScript bindings) or hybrid keyword+semantic index
+- **Build Tool**: Vite (fast dev server, optimized production builds)
+- **Testing**: Vitest (unit/integration tests for backend and frontend)
+- **Database**: PostgreSQL or MongoDB; SQLite acceptable for MVP with embedded eBird taxonomy snapshot
+- **API**: RESTful endpoints (`POST /search`, `GET /birds/:id`)
+- **Input Format**: Free-form text (natural language descriptions via API/UI)
+- **Output Format**: JSON API responses + React UI rendering
+- **Cloud Deployment**: TBD (AWS, Azure, GCP, or Vercel) – deferred until scale requirements known
+- **No external APIs required** for MVP; embed all bird data locally
+- **Output Format**: JSON (machine-readable) + Markdown table (human-readable)
+- **No external APIs required** for MVP; embed all bird data locally
+- **Web Interface**: Optional Flask/FastAPI wrapper; CLI is the canonical interface
+
+## Development Workflow
+
+1. **Issue → Spec → Tests → Implementation → Demo**
+   - Every feature starts as a spec document (bird search use case)
+   - Write integration tests against live bird records (Vitest for all tests)
+   - Implement in TypeScript (strict mode required)
+   - Demo with real birdwatcher queries
+
+2. **Code Review Checklist**
+   - Tests pass locally and in CI (Vitest for backend unit/integration and frontend component tests)
+   - TypeScript compiles with zero errors (strict mode)
+   - Vite builds successfully for production
+   - Taxonomy accuracy verified (no hallucinated birds)
+   - Logs include audit trail
+   - API endpoints unchanged or versioned (semantic versioning for breaking changes)
+   - Documentation updated if search logic, API contracts, or bird data changes
+
+3. **Bird Data Governance**
+   - Quarterly review of taxonomy against eBird releases
+   - Deprecation path for removed species / renamed taxa
+   - User feedback loop: common failed searches analyzed for index gaps
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**Constitution Authority**: This constitution supersedes all other development practices. Amendments require:
+1. Written proposal documenting rationale
+2. Approval from lead maintainers
+3. Migration guide if breaking compatibility
+TypeScript compiles (strict mode, zero errors)
+- No taxonomy errors introduced (principle II)
+- Audit trail completeness (principle IV)
+- API interface backward compatible or versioned (principle V)
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version & Release Cycle**: Semantic versioning (MAJOR.MINOR.PATCH). Releases tagged in git; changelog maintained. Breaking changes increment MAJOR version and trigger user notification.
+
+**Runtime Guidance**: Development workflow and API standards documented in `.github/copilot-instructions.md` and `.github/agents/`.
+
+---
+
+**Version**: 2
+**Version**: 2.1.0 | **Ratified**: 2025-12-23 | **Last Amended**: 2025-12-23
+
+**Version**: 1.0.0 | **Ratified**: 2025-12-23 | **Last Amended**: 2025-12-23
