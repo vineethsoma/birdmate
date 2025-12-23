@@ -9,5 +9,6 @@ dependencies:
     - vineethsoma/agent-packages/skills/tdd-workflow
     - vineethsoma/agent-packages/skills/refactoring-patterns
     - vineethsoma/agent-packages/skills/fullstack-expertise
+    - vineethsoma/agent-packages/skills/spec-driven-development
   mcp: []
 scripts: {}
