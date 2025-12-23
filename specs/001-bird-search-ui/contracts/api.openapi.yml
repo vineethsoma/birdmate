@@ -1,0 +1,456 @@
+openapi: 3.0.3
+info:
+  title: Birdmate API
+  description: Natural language bird search API for identifying bird species through descriptive queries
+  version: 1.0.0
+  contact:
+    name: Birdmate Team
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development server
+  - url: https://api.birdmate.app/v1
+    description: Production server (TBD)
+
+paths:
+  /search:
+    post:
+      summary: Search for bird species using natural language
+      description: |
+        Accepts a free-form natural language description of a bird and returns 
+        5-10 most relevant species ranked by similarity. Supports descriptions 
+        of color, size, behavior, habitat, and other physical characteristics.
+      operationId: searchBirds
+      tags:
+        - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  description: Natural language description of the bird
+                  example: "red chest with grey back"
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  default: 10
+                  description: Maximum number of results to return
+            examples:
+              simpleQuery:
+                value:
+                  query: "blue jay"
+                  limit: 5
+              descriptiveQuery:
+                value:
+                  query: "small brown bird with streaky chest seen in my backyard"
+                  limit: 10
+      responses:
+        '200':
+          description: Successful search with results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+              examples:
+                successfulSearch:
+                  value:
+                    query: "red chest with grey back"
+                    resultCount: 5
+                    results:
+                      - birdId: 1
+                        eBirdCode: "amerob"
+                        commonName: "American Robin"
+                        scientificName: "Turdus migratorius"
+                        thumbnailUrl: "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/123/thumbnail"
+                        fieldMarks: ["Red breast", "Grey back"]
+                        similarityScore: 0.92
+                      - birdId: 15
+                        eBirdCode: "vaethr"
+                        commonName: "Varied Thrush"
+                        scientificName: "Ixoreus naevius"
+                        thumbnailUrl: "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/456/thumbnail"
+                        fieldMarks: ["Orange breast", "Grey back", "Orange eyebrow"]
+                        similarityScore: 0.78
+                zeroResults:
+                  value:
+                    query: "purple eagle with six wings"
+                    resultCount: 0
+                    results: []
+                    message: "No birds match this description. Try adjusting your search."
+        '400':
+          description: Invalid request (empty query, too long, invalid characters)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid query"
+                message: "Query text must be between 1 and 500 characters"
+                code: "INVALID_QUERY"
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Rate limit exceeded"
+                message: "Too many requests. Please try again in 60 seconds."
+                code: "RATE_LIMIT"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+                message: "Failed to process search query"
+                code: "INTERNAL_ERROR"
+
+  /birds/{birdId}:
+    get:
+      summary: Get detailed information about a specific bird species
+      description: Returns comprehensive details including taxonomy, physical characteristics, habitat, images, and similar species
+      operationId: getBirdById
+      tags:
+        - Birds
+      parameters:
+        - name: birdId
+          in: path
+          required: true
+          description: Unique identifier of the bird species
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Bird details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BirdDetail'
+              example:
+                id: 1
+                eBirdCode: "amerob"
+                commonName: "American Robin"
+                scientificName: "Turdus migratorius"
+                family: "Turdidae"
+                order: "Passeriformes"
+                description: "A common large thrush with a reddish-orange breast..."
+                sizeRange:
+                  length: "23-28 cm"
+                  wingspan: "31-40 cm"
+                  weight: "77-85 g"
+                habitatTypes: ["Urban", "Woodland", "Grassland"]
+                geographicRange: "Widespread across North America"
+                fieldMarks: ["Red breast", "Grey back", "White eye ring"]
+                plumageVariations:
+                  breeding: "Bright reddish-orange breast"
+                  nonBreeding: "Slightly duller breast color"
+                  juvenile: "Heavily spotted breast and back"
+                images:
+                  - imageUrl: "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/123/1200"
+                    thumbnailUrl: "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/123/thumbnail"
+                    photographer: "John Doe"
+                    licenseCode: "CC BY-NC-SA 4.0"
+                    plumageType: "breeding"
+                similarSpecies:
+                  - birdId: 15
+                    commonName: "Varied Thrush"
+                    thumbnailUrl: "https://..."
+        '404':
+          description: Bird not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Not found"
+                message: "Bird with ID 999 not found"
+                code: "BIRD_NOT_FOUND"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /taxonomy:
+    get:
+      summary: Get current bird taxonomy version and metadata
+      description: Returns information about the eBird taxonomy version currently loaded in the database
+      operationId: getTaxonomyMetadata
+      tags:
+        - Taxonomy
+      responses:
+        '200':
+          description: Taxonomy metadata retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxonomyMetadata'
+              example:
+                version: "2023.1"
+                releaseDate: "2023-08-01"
+                importedAt: "2025-12-20T10:00:00Z"
+                speciesCount: 847
+                region: "North America"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    SearchResponse:
+      type: object
+      required:
+        - query
+        - resultCount
+        - results
+      properties:
+        query:
+          type: string
+          description: The original search query
+        resultCount:
+          type: integer
+          description: Number of results returned
+        results:
+          type: array
+          description: Array of matching bird species (5-10 maximum)
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/BirdSearchResult'
+        message:
+          type: string
+          description: Optional message for zero results or ambiguous queries
+          example: "Many birds match this description"
+
+    BirdSearchResult:
+      type: object
+      required:
+        - birdId
+        - eBirdCode
+        - commonName
+        - scientificName
+        - thumbnailUrl
+        - fieldMarks
+        - similarityScore
+      properties:
+        birdId:
+          type: integer
+          description: Unique bird identifier
+        eBirdCode:
+          type: string
+          description: eBird species code
+        commonName:
+          type: string
+          description: Primary common name
+        scientificName:
+          type: string
+          description: Scientific (Linnean) name
+        thumbnailUrl:
+          type: string
+          format: uri
+          description: URL to bird thumbnail image
+        fieldMarks:
+          type: array
+          description: Key identifying features (1-2 shown in card)
+          items:
+            type: string
+          maxItems: 2
+        similarityScore:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          description: Cosine similarity score (higher = more relevant)
+
+    BirdDetail:
+      type: object
+      required:
+        - id
+        - eBirdCode
+        - commonName
+        - scientificName
+        - family
+        - order
+        - description
+        - sizeRange
+        - habitatTypes
+        - geographicRange
+        - fieldMarks
+        - images
+      properties:
+        id:
+          type: integer
+        eBirdCode:
+          type: string
+        commonName:
+          type: string
+        scientificName:
+          type: string
+        family:
+          type: string
+          description: Taxonomic family
+        order:
+          type: string
+          description: Taxonomic order
+        description:
+          type: string
+          description: Comprehensive species description
+        sizeRange:
+          type: object
+          properties:
+            length:
+              type: string
+              example: "23-28 cm"
+            wingspan:
+              type: string
+              example: "31-40 cm"
+            weight:
+              type: string
+              example: "77-85 g"
+        habitatTypes:
+          type: array
+          items:
+            type: string
+        geographicRange:
+          type: string
+        fieldMarks:
+          type: array
+          items:
+            type: string
+          description: All identifying features
+        plumageVariations:
+          type: object
+          properties:
+            breeding:
+              type: string
+            nonBreeding:
+              type: string
+            juvenile:
+              type: string
+        images:
+          type: array
+          minItems: 2
+          description: High-quality images (at least 2 per FR-006)
+          items:
+            $ref: '#/components/schemas/BirdImage'
+        similarSpecies:
+          type: array
+          description: Birds that look similar
+          items:
+            type: object
+            properties:
+              birdId:
+                type: integer
+              commonName:
+                type: string
+              thumbnailUrl:
+                type: string
+                format: uri
+
+    BirdImage:
+      type: object
+      required:
+        - imageUrl
+        - thumbnailUrl
+        - photographer
+        - licenseCode
+      properties:
+        imageUrl:
+          type: string
+          format: uri
+          description: Full-resolution image URL
+        thumbnailUrl:
+          type: string
+          format: uri
+          description: Thumbnail for preview
+        photographer:
+          type: string
+          description: Photographer name (required for attribution)
+        licenseCode:
+          type: string
+          description: Creative Commons license
+          example: "CC BY-NC-SA 4.0"
+        plumageType:
+          type: string
+          enum: [breeding, nonBreeding, juvenile, male, female]
+          description: Optional plumage/sex tag
+
+    TaxonomyMetadata:
+      type: object
+      required:
+        - version
+        - releaseDate
+        - importedAt
+        - speciesCount
+        - region
+      properties:
+        version:
+          type: string
+          description: eBird taxonomy version
+          example: "2023.1"
+        releaseDate:
+          type: string
+          format: date
+          description: Official eBird release date
+        importedAt:
+          type: string
+          format: date-time
+          description: When data was imported to database
+        speciesCount:
+          type: integer
+          description: Total species in database
+        region:
+          type: string
+          description: Geographic region filter
+          example: "North America"
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+        - code
+      properties:
+        error:
+          type: string
+          description: Error type (human-readable)
+        message:
+          type: string
+          description: Detailed error message
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - INVALID_QUERY
+            - BIRD_NOT_FOUND
+            - RATE_LIMIT
+            - INTERNAL_ERROR
+        details:
+          type: object
+          description: Optional additional error context
+
+  securitySchemes: {}
+
+tags:
+  - name: Search
+    description: Natural language bird search operations
+  - name: Birds
+    description: Bird species details and information
+  - name: Taxonomy
+    description: Taxonomy version and metadata
