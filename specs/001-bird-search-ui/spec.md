@@ -14,6 +14,11 @@
 - Q: Search algorithm: How should semantic search be implemented for natural language queries? → A: OpenAI embeddings API (simple, hosted, pay-per-use)
 - Q: Bird detail page navigation: How should users return to search results after viewing a bird detail page? → A: Browser back button + URL-based state (web-native)
 - Q: Data freshness: How should the app handle outdated bird taxonomy when eBird releases updates? → A: Manual quarterly updates with version indicator (controlled)
+- Q: Concurrent user scalability: What are the target concurrent user thresholds for MVP vs production? → A: Staged targets: 10 concurrent users for MVP, 100 concurrent users for production
+- Q: Similar species display: How many similar species should be shown on bird detail pages? → A: 3-5 similar species (focused comparison based on visual similarity, shared field marks, habitat overlap)
+- Q: Back button behavior: When user returns from bird detail to search results, should the search box and results restore? → A: Pre-populate search box with previous query and show cached results immediately (seamless navigation, supports refinement)
+- Q: Typo correction scope: Should typo correction apply to common bird names only or also descriptive words? → A: Only common bird names (pre-defined dictionary like "blue jay", "robin", "cardinal"); descriptive words used as-is in semantic search
+- Q: Test query documentation: Should the 20 curated test queries for SC-002 be documented in the spec? → A: Yes, document in spec appendix to ensure consistent testing and validation across implementations
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -46,7 +51,7 @@ After seeing search results, the user clicks on a bird card to view comprehensiv
 
 1. **Given** search results are displayed, **When** the user clicks on a bird card, **Then** a detailed view opens showing scientific name, common name, size range, habitat preferences, geographic range, and identifying features
 2. **Given** the user is viewing bird details, **When** the page loads, **Then** high-quality images showing different angles and plumages are displayed
-3. **Given** the user is viewing bird details, **When** they scroll to identification section, **Then** they see key field marks, similar species, and how to distinguish them
+3. **Given** the user is viewing bird details, **When** they scroll to identification section, **Then** they see key field marks, 3-5 similar species, and how to distinguish them
 4. **Given** the user views a bird with seasonal variations, **When** they check plumage section, **Then** breeding and non-breeding plumage differences are clearly documented
 
 ---
@@ -102,12 +107,12 @@ When the user searches for an impossible combination or makes a typo, the system
 - **FR-003**: System MUST display search results as a list of bird cards showing thumbnail image, common name, scientific name, and 1-2 key identifying features
 - **FR-004**: System MUST rank results by relevance to the user's description with most relevant birds appearing first
 - **FR-005**: Users MUST be able to click a bird card to view detailed information on a separate detail page
-- **FR-006**: System MUST display bird detail pages including: common name, scientific name, family, size range, weight range, habitat types, geographic range, identifying field marks, and at least 2 high-quality images
+- **FR-006**: System MUST display bird detail pages including: common name, scientific name, family, size range, weight range, habitat types, geographic range, identifying field marks, 3-5 similar species with distinguishing tips, and at least 2 high-quality images
 - **FR-007**: System MUST handle searches with zero results gracefully by displaying helpful messaging and suggesting query modifications
-- **FR-008**: System MUST support basic typo correction for common bird names (e.g., "blu jay" → "blue jay")
+- **FR-008**: System MUST support basic typo correction for common bird names only using pre-defined dictionary (e.g., "blu jay" → "blue jay"); descriptive words are passed to semantic search as-is
 - **FR-009**: System MUST work on desktop and mobile browsers with responsive layout adapting to screen size
 - **FR-010**: System MUST load initial page (search interface) within 2 seconds on standard broadband connection
-- **FR-011**: System MUST persist bird search queries and results in URL parameters to support browser back/forward navigation and result sharing
+- **FR-011**: System MUST persist bird search queries and results in URL parameters to support browser back/forward navigation with search box pre-populated and cached results displayed
 - **FR-012**: System MUST indicate search processing state with visual loading indicator
 - **FR-013**: System MUST display empty state messaging when database is empty or unavailable
 - **FR-014**: System MUST sanitize user input to prevent XSS attacks
@@ -116,7 +121,7 @@ When the user searches for an impossible combination or makes a typo, the system
 
 ### Key Entities
 
-- **Bird Species**: Represents a distinct bird species with taxonomic classification, physical characteristics, behavioral traits, geographic distribution, and visual media. Includes common name, scientific name, family, order, size metrics, weight range, habitat preferences, range map data, plumage variations (breeding, non-breeding, juvenile), field marks, similar species comparisons, and multiple images.
+- **Bird Species**: Represents a distinct bird species with taxonomic classification, physical characteristics, behavioral traits, geographic distribution, and visual media. Includes common name, scientific name, family, order, size metrics, weight range, habitat preferences, range map data, plumage variations (breeding, non-breeding, juvenile), field marks, 3-5 similar species comparisons based on visual similarity and shared field marks, and multiple images.
 
 - **Search Query**: Represents a user's natural language search input with extracted features (color, size, habitat, behavior), processing timestamp, normalized description, and matched results with confidence scores.
 
@@ -131,8 +136,8 @@ When the user searches for an impossible combination or makes a typo, the system
 - **SC-003**: Zero XSS vulnerabilities detected in security testing of search input handling
 - **SC-004**: Application loads and displays search interface in under 2 seconds on 4G mobile connection
 - **SC-005**: Search interface is usable on screen widths from 320px (mobile) to 1920px (desktop) without horizontal scrolling
-- **SC-006**: Users can complete a search → view details → return to results workflow without errors in 100 consecutive test iterations
-- **SC-007**: System successfully handles 50 concurrent users performing searches without response time degradation beyond 10%
+- **SC-006**: Users can complete a search → view details → return to results workflow without errors in 100 consecutive test iterations (back button restores search box and cached results)
+- **SC-007**: System successfully handles 10 concurrent users performing searches without response time degradation beyond 10% (MVP target)
 - **SC-008**: When database contains 500+ bird species, search relevance remains above 85% accuracy (correct bird in top 5 results)
 
 ## Scope Boundaries
@@ -181,4 +186,39 @@ When the user searches for an impossible combination or makes a typo, the system
 - **Browser Support**: Chrome, Firefox, Safari, Edge (last 2 major versions)
 - **Accessibility**: WCAG 2.1 Level A compliance minimum (keyboard navigation, alt text for images, sufficient color contrast)
 - **Data Accuracy**: Bird taxonomy must match authoritative source within 30 days of source updates
-- **Scalability**: System must handle 100 concurrent users without degradation
+- **Scalability**: System must handle 100 concurrent users without degradation (production target; MVP target is 10 concurrent users per SC-007)
+
+---
+
+## Appendix: Curated Test Queries for SC-002
+
+The following 20 test queries are used to validate search relevance per SC-002 (90% top-3 accuracy requirement). Each query includes the expected bird species that should appear in top 3 results.
+
+| # | Test Query | Expected Top Result | Notes |
+|---|------------|---------------------|-------|
+| 1 | blue jay | Blue Jay | Exact common name |
+| 2 | red chest with grey back | American Robin | Classic field mark description |
+| 3 | small brown bird | House Sparrow, Song Sparrow, or House Wren | Intentionally ambiguous |
+| 4 | woodpecker with red head | Red-headed Woodpecker or Red-bellied Woodpecker | Specific behavior + feature |
+| 5 | bright red bird | Northern Cardinal | Color-focused |
+| 6 | yellow bird with black wings | American Goldfinch | Two-color description |
+| 7 | large black bird | American Crow or Common Raven | Size + color |
+| 8 | small hovering bird | Ruby-throated Hummingbird or Anna's Hummingbird | Behavior-based |
+| 9 | bird with orange breast | American Robin or Baltimore Oriole | Single feature |
+| 10 | blue bird smaller than a robin | Eastern Bluebird or Western Bluebird | Comparative size |
+| 11 | black and white striped head | White-crowned Sparrow or White-throated Sparrow | Pattern description |
+| 12 | bird with red patch on shoulder | Red-winged Blackbird | Specific field mark location |
+| 13 | grey bird with long tail | Northern Mockingbird or Gray Catbird | Color + structural feature |
+| 14 | yellow throat black mask | Common Yellowthroat | Multiple specific features |
+| 15 | hawk with red tail | Red-tailed Hawk | Raptor + feature |
+| 16 | duck with green head | Mallard | Waterfowl + color |
+| 17 | black bird with yellow eye | Common Grackle or Brewer's Blackbird | Color + eye detail |
+| 18 | small bird with red cap | Ruby-crowned Kinglet or Downy Woodpecker | Size + head marking |
+| 19 | orange and black bird | Baltimore Oriole or American Redstart | Two-color combination |
+| 20 | bird with crest | Blue Jay, Northern Cardinal, or Tufted Titmouse | Structural feature only |
+
+**Validation Criteria**: 
+- Minimum 18 of 20 queries (90%) must return expected bird in top 3 results
+- Ambiguous queries (#3, #20) pass if any listed species appears in top 3
+- Tests run against database with 500+ North American bird species
+

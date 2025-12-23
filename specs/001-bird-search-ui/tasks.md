@@ -1,9 +1,16 @@
 # Tasks: Natural Language Bird Search Interface
 
 **Input**: Design documents from `/specs/001-bird-search-ui/`  
-**Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/ ✅, quickstart.md ✅
+**Prerequisites**: plan.md ✅, spec.md ✅ (with 5 clarifications), research.md ✅, data-model.md ✅, contracts/ ✅, quickstart.md ✅
 
 **Tests**: Constitution Principle III mandates TDD. All test tasks included and MUST be written first before implementation.
+
+**Specification Updates**: Tasks incorporate clarifications from spec.md:
+- Staged scalability: 10 concurrent users (MVP), 100 concurrent users (production)
+- Similar species: 3-5 species per bird detail page
+- Back button: Pre-populates search box with cached results
+- Typo correction: Only common bird names (pre-defined dictionary)
+- Test queries: 20 documented queries in spec appendix for validation
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -67,7 +74,7 @@
 ### Tests for User Story 1 (TDD - WRITE FIRST, ENSURE FAIL)
 
 - [ ] T026 [P] [US1] Create contract test for POST /api/v1/search in backend/tests/contract/test-search-endpoint.test.ts verifying request/response schema compliance with OpenAPI spec
-- [ ] T027 [P] [US1] Create integration test for search relevance in backend/tests/integration/test-search-relevance.test.ts with 20 curated queries (e.g., "blue jay", "red chest with grey back") validating top-3 accuracy ≥90%
+- [ ] T027 [P] [US1] Create integration test for search relevance in backend/tests/integration/test-search-relevance.test.ts using the 20 curated queries from spec appendix validating top-3 accuracy ≥90% (18 of 20 queries must pass)
 - [ ] T028 [P] [US1] Create integration test for search performance in backend/tests/integration/test-search-performance.test.ts validating <3 second response time for 95% of queries
 - [ ] T029 [P] [US1] Create unit test for SearchService.search() in backend/tests/unit/test-search-service.test.ts covering embedding generation, similarity calculation, and result ranking
 - [ ] T030 [P] [US1] Create React component test for SearchBox in frontend/tests/components/test-SearchBox.test.tsx verifying input handling, validation, and submit behavior
@@ -89,7 +96,7 @@
 - [ ] T043 [P] [US1] Create BirdCard React component in frontend/src/components/BirdCard.tsx displaying thumbnail, common name, scientific name, 1-2 field marks
 - [ ] T044 [US1] Create SearchResults React component in frontend/src/components/SearchResults.tsx rendering grid of BirdCard components with loading and empty states
 - [ ] T045 [US1] Create useSearch custom hook in frontend/src/hooks/useSearch.ts using TanStack Query to call POST /search with caching
-- [ ] T046 [US1] Create HomePage component in frontend/src/pages/HomePage.tsx composing SearchBox and SearchResults with URL state persistence for back button support (per FR-011)
+- [ ] T046 [US1] Create HomePage component in frontend/src/pages/HomePage.tsx composing SearchBox and SearchResults with URL state persistence and result caching for back button support (pre-populates search box and shows cached results per FR-011)
 - [ ] T047 [US1] Add loading spinner component in frontend/src/components/shared/Loading.tsx displayed during search processing (per FR-012)
 - [ ] T048 [US1] Add responsive CSS for mobile (320px) to desktop (1920px) in frontend/src/styles/ ensuring no horizontal scroll (per FR-009, SC-005)
 
@@ -114,8 +121,8 @@
 - [ ] T052 [P] [US2] Create BirdImage entity model in backend/src/models/BirdImage.ts with validation (valid HTTPS URLs, required photographer/license per CC BY-NC-SA)
 - [ ] T053 [US2] Extend BirdService in backend/src/services/BirdService.ts with getBirdDetail() method returning full bird data with images and similar species
 - [ ] T054 [US2] Implement GET /api/v1/birds/:id endpoint in backend/src/api/routes/birds.ts calling BirdService.getBirdDetail() with 404 handling
-- [ ] T055 [P] [US2] Create BirdDetail React component in frontend/src/components/BirdDetail.tsx displaying full species information (taxonomy, size, habitat, range, plumage variations, images with photographer attribution)
-- [ ] T056 [P] [US2] Create SimilarSpecies React component in frontend/src/components/SimilarSpecies.tsx showing related species with thumbnails and comparison tips
+- [ ] T055 [P] [US2] Create BirdDetail React component in frontend/src/components/BirdDetail.tsx displaying full species information (taxonomy, size, habitat, range, plumage variations, images with photographer attribution, 3-5 similar species)
+- [ ] T056 [P] [US2] Create SimilarSpecies React component in frontend/src/components/SimilarSpecies.tsx showing 3-5 related species with thumbnails and comparison tips based on visual similarity
 - [ ] T057 [US2] Create useBirdDetail custom hook in frontend/src/hooks/useBirdDetail.ts using TanStack Query to call GET /birds/:id with caching
 - [ ] T058 [US2] Create BirdDetailPage component in frontend/src/pages/BirdDetailPage.tsx composing BirdDetail and SimilarSpecies with URL parameter handling (/birds/:id route)
 - [ ] T059 [US2] Add click handler to BirdCard component in frontend/src/components/BirdCard.tsx to navigate to BirdDetailPage using React Router
@@ -139,7 +146,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T064 [P] [US4] Implement typo correction utility in backend/src/utils/typoCorrection.ts using Levenshtein distance for common bird name suggestions (per FR-008)
+- [ ] T064 [P] [US4] Implement typo correction utility in backend/src/utils/typoCorrection.ts using Levenshtein distance for common bird names only (pre-defined dictionary like "blue jay", "robin", "cardinal"); descriptive words passed to semantic search as-is per FR-008
 - [ ] T065 [US4] Extend SearchService in backend/src/services/SearchService.ts to handle zero results: check for typos, generate helpful messages based on query characteristics
 - [ ] T066 [US4] Update POST /api/v1/search endpoint in backend/src/api/routes/search.ts to return optional "message" field for zero results or ambiguous queries (per OpenAPI schema)
 - [ ] T067 [P] [US4] Create ErrorMessage React component in frontend/src/components/shared/ErrorMessage.tsx displaying constructive error messages with suggestions
@@ -185,7 +192,7 @@
 - [ ] T082 [P] Verify color contrast ratios meet WCAG standards across all UI components
 - [ ] T083 Run full security audit: verify XSS prevention, test rate limiting, validate input sanitization across all endpoints
 - [ ] T084 Run performance benchmarking: validate <3s search response time and <2s initial page load (SC-001, SC-004)
-- [ ] T085 Run scale testing: validate 50 concurrent users without >10% degradation (SC-007)
+- [ ] T085 Run scale testing: validate 10 concurrent users without >10% degradation for MVP (SC-007); document path to 100 concurrent users for production
 - [ ] T086 Run constitution compliance audit: verify all 5 principles satisfied (natural language first, accurate taxonomy, TDD, observability, API first)
 - [ ] T087 Execute quickstart.md validation: fresh developer follows guide, completes setup, runs tests, sees working application in <10 minutes
 - [ ] T088 [P] Code cleanup: remove commented code, consolidate duplicate utilities, refactor long functions
