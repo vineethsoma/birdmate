@@ -3,7 +3,7 @@ description: Coordinate multi-story feature development with context management,
   validation, and progress tracking across parallel workstreams
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:37.772392'
+  apm_installed_at: '2025-12-23T18:13:07.059399'
   apm_package: vineethsoma/agent-packages/skills/feature-orchestration
   apm_version: 1.0.0
 name: feature-orchestration

@@ -3,7 +3,7 @@ description: Full-stack development expertise covering backend, frontend, databa
   DevOps, and testing domains
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:38.066162'
+  apm_installed_at: '2025-12-23T18:13:07.387906'
   apm_package: vineethsoma/agent-packages/skills/fullstack-expertise
   apm_version: 1.0.0
 name: fullstack-expertise

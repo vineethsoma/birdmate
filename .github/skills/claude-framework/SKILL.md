@@ -3,7 +3,7 @@ description: CLAUDE Framework coding standards for code quality, naming conventi
   error handling, security, testing, database, and logging
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:37.475509'
+  apm_installed_at: '2025-12-23T18:13:06.761320'
   apm_package: vineethsoma/agent-packages/skills/claude-framework
   apm_version: 1.0.0
 name: claude-framework

@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+apm_modules/
+
+# Build output
+dist/
+build/
+coverage/
+
+# Database
+database/*.db
+database/*.db-shm
+database/*.db-wal
+
+# Package locks
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.min.js
+*.min.css
+AGENTS.md

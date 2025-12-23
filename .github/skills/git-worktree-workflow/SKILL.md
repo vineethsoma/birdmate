@@ -3,7 +3,7 @@ description: Manage parallel development with git worktree for isolated story br
   conflict prevention, and efficient merge coordination
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:38.356733'
+  apm_installed_at: '2025-12-23T18:13:07.677097'
   apm_package: vineethsoma/agent-packages/skills/git-worktree-workflow
   apm_version: 1.0.0
 name: git-worktree-workflow

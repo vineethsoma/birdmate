@@ -3,7 +3,7 @@ description: Martin Fowler's refactoring catalog with incremental change pattern
   and test-driven refactoring discipline
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:38.655551'
+  apm_installed_at: '2025-12-23T18:13:07.996025'
   apm_package: vineethsoma/agent-packages/skills/refactoring-patterns
   apm_version: 1.0.0
 name: refactoring-patterns
