@@ -1,0 +1,8 @@
+
+# APM dependencies
+apm_modules/
+
+
+# APM integrated agents
+.github/agents/*-apm.agent.md
+.github/agents/*-apm.chatmode.md
