@@ -4,7 +4,7 @@
 <!-- APM Version: 0.7.0 -->
 
 <!-- SPEC-KIT CONSTITUTION: BEGIN -->
-hash: 0cc0dde22ae8 path: .specify/memory/constitution.md
+hash: f874a1296e01 path: .specify/memory/constitution.md
 <!--
 SYNC IMPACT REPORT
 ==================
@@ -61,9 +61,6 @@ Ship as web application with RESTful API backend; UI MUST accept plain text inpu
 - **Output Format**: JSON API responses + React UI rendering
 - **Cloud Deployment**: TBD (AWS, Azure, GCP, or Vercel) – deferred until scale requirements known
 - **No external APIs required** for MVP; embed all bird data locally
-- **Output Format**: JSON (machine-readable) + Markdown table (human-readable)
-- **No external APIs required** for MVP; embed all bird data locally
-- **Web Interface**: Optional Flask/FastAPI wrapper; CLI is the canonical interface
 
 ## Development Workflow
 
@@ -93,10 +90,6 @@ Ship as web application with RESTful API backend; UI MUST accept plain text inpu
 1. Written proposal documenting rationale
 2. Approval from lead maintainers
 3. Migration guide if breaking compatibility
-TypeScript compiles (strict mode, zero errors)
-- No taxonomy errors introduced (principle II)
-- Audit trail completeness (principle IV)
-- API interface backward compatible or versioned (principle V)
 
 **Version & Release Cycle**: Semantic versioning (MAJOR.MINOR.PATCH). Releases tagged in git; changelog maintained. Breaking changes increment MAJOR version and trigger user notification.
 
@@ -104,10 +97,7 @@ TypeScript compiles (strict mode, zero errors)
 
 ---
 
-**Version**: 2
 **Version**: 2.1.0 | **Ratified**: 2025-12-23 | **Last Amended**: 2025-12-23
-
-**Version**: 1.0.0 | **Ratified**: 2025-12-23 | **Last Amended**: 2025-12-23
 <!-- SPEC-KIT CONSTITUTION: END -->
 
 ---

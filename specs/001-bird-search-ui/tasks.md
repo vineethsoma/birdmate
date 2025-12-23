@@ -47,14 +47,16 @@
 - [ ] T010 Create database schema in database/schema.sql with tables: birds, bird_images, search_queries, search_results, taxonomy_metadata (per data-model.md)
 - [ ] T011 Create database migration framework in backend/src/db/migrations/ with versioned migration files
 - [ ] T012 [P] Implement SQLite database client wrapper in backend/src/db/client.ts with connection pooling and error handling
-- [ ] T013 [P] Create eBird taxonomy download script in backend/src/db/seeds/download-taxonomy.ts to fetch CSV from eBird
+- [ ] T013 [P] Create eBird taxonomy download script in backend/src/db/seeds/download-taxonomy.ts to download eBird taxonomy CSV snapshot (one-time data export, not runtime API)
 - [ ] T014 Create taxonomy seeding script in backend/src/db/seeds/seed-taxonomy.ts to import eBird CSV into birds table (filter North America, 500-1000 species)
-- [ ] T015 Create Macaulay Library image fetching script in backend/src/db/seeds/fetch-images.ts to retrieve 3-5 images per species and populate bird_images table
+- [ ] T015 Create Macaulay Library image seeding script in backend/src/db/seeds/fetch-images.ts to download and cache 3-5 images per species URLs from Macaulay Library (one-time data snapshot for embedded database; includes rate limit handling and retry logic)
 - [ ] T016 Create OpenAI embeddings generation script in backend/src/db/seeds/generate-embeddings.ts to pre-compute embeddings for all bird descriptions (1536-dim vectors)
+- [ ] T016b Create embedding update script in backend/src/db/seeds/update-embeddings.ts to regenerate embeddings when taxonomy data changes (quarterly updates); includes incremental update logic to only process new/modified species
 - [ ] T017 [P] Implement base logging service in backend/src/utils/logging.ts with structured logging (timestamp, level, context)
 - [ ] T018 [P] Implement input sanitization middleware in backend/src/api/middleware/sanitize.ts using DOMPurify and validator.js (prevents XSS per FR-014)
 - [ ] T019 [P] Implement error handling middleware in backend/src/api/middleware/errorHandler.ts with consistent error response format
 - [ ] T020 [P] Implement rate limiting middleware in backend/src/api/middleware/rateLimit.ts to prevent abuse
+- [ ] T020b [P] Create integration test for database unavailability in backend/tests/integration/test-database-errors.test.ts validating graceful degradation and error messaging per FR-013
 - [ ] T021 [P] Setup Express/Fastify server configuration in backend/src/server.ts with CORS, middleware stack, and route registration
 - [ ] T022 [P] Create shared TypeScript types in shared/types/index.ts: Bird, BirdSearchResult, BirdDetail, SearchQuery, SearchResponse, TaxonomyMetadata (matching OpenAPI schema)
 - [ ] T023 [P] Setup React Router configuration in frontend/src/App.tsx with routes for home page and bird detail page
@@ -146,7 +148,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T064 [P] [US4] Implement typo correction utility in backend/src/utils/typoCorrection.ts using Levenshtein distance for common bird names only (pre-defined dictionary like "blue jay", "robin", "cardinal"); descriptive words passed to semantic search as-is per FR-008
+- [ ] T064 [P] [US4] Implement typo correction utility in backend/src/utils/typoCorrection.ts using Levenshtein distance (max edit distance: 2 characters) for common bird names only (pre-defined dictionary of ~500 common names like "blue jay", "robin", "cardinal"); descriptive words passed to semantic search as-is per FR-008
 - [ ] T065 [US4] Extend SearchService in backend/src/services/SearchService.ts to handle zero results: check for typos, generate helpful messages based on query characteristics
 - [ ] T066 [US4] Update POST /api/v1/search endpoint in backend/src/api/routes/search.ts to return optional "message" field for zero results or ambiguous queries (per OpenAPI schema)
 - [ ] T067 [P] [US4] Create ErrorMessage React component in frontend/src/components/shared/ErrorMessage.tsx displaying constructive error messages with suggestions
@@ -175,6 +177,7 @@
 - [ ] T074 [US3] Update HomePage component in frontend/src/pages/HomePage.tsx to integrate SearchHistory component below SearchBox
 - [ ] T075 [US3] Update SearchBox component in frontend/src/components/SearchBox.tsx to preserve previous query text when refining (pre-populate input)
 - [ ] T076 [US3] Add visual indicator in SearchResults component showing when results are filtered/refined from broader search
+- [ ] T076b [P] Create Footer component in frontend/src/components/shared/Footer.tsx displaying taxonomy version and last-update date (fetches from GET /api/v1/taxonomy per FR-016)
 
 **Checkpoint**: All user stories complete - full feature functionality delivered
 

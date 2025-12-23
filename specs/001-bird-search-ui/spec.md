@@ -103,7 +103,7 @@ When the user searches for an impossible combination or makes a typo, the system
 ### Functional Requirements
 
 - **FR-001**: System MUST accept free-form natural language text input describing bird characteristics (color, size, behavior, habitat, sound)
-- **FR-002**: System MUST return search results within 3 seconds for 95% of queries
+- **FR-002** [Search Response Time]: System MUST return search results within 3 seconds for 95% of queries
 - **FR-003**: System MUST display search results as a list of bird cards showing thumbnail image, common name, scientific name, and 1-2 key identifying features
 - **FR-004**: System MUST rank results by relevance to the user's description with most relevant birds appearing first
 - **FR-005**: Users MUST be able to click a bird card to view detailed information on a separate detail page
@@ -111,7 +111,7 @@ When the user searches for an impossible combination or makes a typo, the system
 - **FR-007**: System MUST handle searches with zero results gracefully by displaying helpful messaging and suggesting query modifications
 - **FR-008**: System MUST support basic typo correction for common bird names only using pre-defined dictionary (e.g., "blu jay" → "blue jay"); descriptive words are passed to semantic search as-is
 - **FR-009**: System MUST work on desktop and mobile browsers with responsive layout adapting to screen size
-- **FR-010**: System MUST load initial page (search interface) within 2 seconds on standard broadband connection
+- **FR-010** [Initial Page Load Time]: System MUST load initial page (search interface) within 2 seconds on standard broadband connection
 - **FR-011**: System MUST persist bird search queries and results in URL parameters to support browser back/forward navigation with search box pre-populated and cached results displayed
 - **FR-012**: System MUST indicate search processing state with visual loading indicator
 - **FR-013**: System MUST display empty state messaging when database is empty or unavailable
@@ -198,6 +198,24 @@ The following 20 test queries are used to validate search relevance per SC-002 (
 |---|------------|---------------------|-------|
 | 1 | blue jay | Blue Jay | Exact common name |
 | 2 | red chest with grey back | American Robin | Classic field mark description |
+| 3 | small brown bird | House Sparrow, Song Sparrow, or House Wren | Intentionally ambiguous |
+| 4 | woodpecker with red head | Red-headed Woodpecker or Red-bellied Woodpecker | Specific behavior + feature |
+| 5 | bright red bird | Northern Cardinal | Color-focused |
+| 6 | yellow bird with black wings | American Goldfinch | Two-color description |
+| 7 | large black bird | American Crow or Common Raven | Size + color |
+| 8 | small hovering bird | Ruby-throated Hummingbird or Anna's Hummingbird | Behavior-based |
+| 9 | bird with orange breast | American Robin or Baltimore Oriole | Single feature |
+| 10 | blue bird smaller than a robin | Eastern Bluebird or Western Bluebird | Comparative size |
+| 11 | black and white striped head | White-crowned Sparrow or White-throated Sparrow | Pattern description |
+| 12 | bird with red patch on shoulder | Red-winged Blackbird | Specific field mark location |
+| 13 | grey bird with long tail | Northern Mockingbird or Gray Catbird | Color + structural feature |
+| 14 | yellow throat black mask | Common Yellowthroat | Multiple specific features |
+| 15 | hawk with red tail | Red-tailed Hawk | Raptor + feature |
+| 16 | duck with green head | Mallard | Waterfowl + color |
+| 17 | black bird with yellow eye | Common Grackle or Brewer's Blackbird | Color + eye detail |
+| 18 | small bird with red cap | Ruby-crowned Kinglet or Downy Woodpecker | Size + head marking |
+| 19 | orange and black bird | Baltimore Oriole or American Redstart | Two-color combination |
+| 20 | bird with crest | Blue Jay, Northern Cardinal, or Tufted Titmouse | Structural feature only |
 | 3 | small brown bird | House Sparrow, Song Sparrow, or House Wren | Intentionally ambiguous |
 | 4 | woodpecker with red head | Red-headed Woodpecker or Red-bellied Woodpecker | Specific behavior + feature |
 | 5 | bright red bird | Northern Cardinal | Color-focused |

@@ -49,6 +49,12 @@ Build a web application enabling birdwatchers to identify bird species through n
 - 5-10 results per search maximum
 - Quarterly manual taxonomy updates
 
+**Similar Species Algorithm**:
+- Use embedding vector similarity (cosine distance) to find 3-5 nearest neighbors
+- Filter by same family or order for taxonomic relevance
+- Prioritize species with overlapping geographic range
+- Display distinguishing field marks from bird descriptions
+
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
