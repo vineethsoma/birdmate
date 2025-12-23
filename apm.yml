@@ -4,8 +4,18 @@ description: APM project for birdmate
 author: Vineeth Soma
 dependencies:
   apm:
+    # Agents
     - vineethsoma/agent-packages/agents/fullstack-engineer
     - vineethsoma/agent-packages/agents/feature-lead
     - vineethsoma/agent-packages/agents/package-manager
+    # Skills
+    - vineethsoma/agent-packages/skills/spec-driven-development
+    - vineethsoma/agent-packages/skills/claude-framework
+    - vineethsoma/agent-packages/skills/tdd-workflow
+    - vineethsoma/agent-packages/skills/refactoring-patterns
+    - vineethsoma/agent-packages/skills/fullstack-expertise
+    - vineethsoma/agent-packages/skills/feature-orchestration
+    - vineethsoma/agent-packages/skills/git-worktree-workflow
+    - vineethsoma/agent-packages/skills/task-delegation
   mcp: []
 scripts: {}

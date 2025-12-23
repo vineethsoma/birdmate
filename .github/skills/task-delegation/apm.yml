@@ -1,0 +1,9 @@
+name: task-delegation
+version: 1.0.0
+description: Delegate user stories to specialized agents with clear context and handoff protocols
+author: Vineeth Soma
+type: skill
+
+dependencies:
+  apm:
+    - vineethsoma/agent-packages/skills/spec-driven-development
