@@ -1,12 +1,39 @@
 
-# APM dependencies
+# Dependencies
+node_modules/
 apm_modules/
 
+# Environment variables
+.env
+.env.local
+
+# Database
+database/*.db
+database/*.db-shm
+database/*.db-wal
+
+# Build output
+dist/
+build/
+*.log
 
 # APM integrated agents
 .github/agents/*-apm.agent.md
 .github/agents/*-apm.chatmode.md
 
-
 # APM integrated prompts
 .github/prompts/*-apm.prompt.md
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
