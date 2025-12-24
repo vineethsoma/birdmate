@@ -7,11 +7,11 @@ handoffs:
   - label: Delegate to Fullstack Engineer
     agent: fullstack-engineer
     prompt: Implement this user story according to the specification and acceptance criteria
-    send: false
+    send: true # Automatically sends the prompt to the next agent
   - label: Request TDD Review
     agent: tdd-specialist
     prompt: Review test coverage and TDD compliance for this story
-    send: false
+    send: true # Automatically sends the prompt to the next agent
 ---
 
 # Feature Lead
