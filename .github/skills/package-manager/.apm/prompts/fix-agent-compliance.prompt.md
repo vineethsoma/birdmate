@@ -95,7 +95,7 @@ cat path/to/agent.agent.md | head -30
 - [ ] Has `author`, `version`, `color` in YAML?
 - [ ] Has `skills` list in YAML?
 - [ ] Has `apm` metadata in YAML?
-- [ ] Uses model alias (e.g., "sonnet" instead of "Claude Sonnet 4")?
+- [ ] Uses model alias (e.g., "sonnet" instead of "Claude Sonnet 4.5")?
 - [ ] Uses invalid tool names?
 - [ ] Has handoffs with missing target agents?
 
@@ -147,7 +147,7 @@ model: sonnet
 name: My Agent
 description: Does stuff with expertise in area-1 and area-2
 tools: ['read', 'edit']
-model: Claude Sonnet 4
+model: Claude Sonnet 4.5
 ---
 
 # My Agent
@@ -334,7 +334,7 @@ git push origin main
 **Cause**: Using model alias instead of full name
 
 **Fix**: Replace with official model name:
-- `sonnet` → `Claude Sonnet 4`
+- `sonnet` → `Claude Sonnet 4.5`
 - `gpt4` → `GPT-4`
 - `gpt-4-turbo` → `GPT-4 Turbo`
 

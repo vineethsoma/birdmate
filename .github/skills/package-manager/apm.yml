@@ -1,5 +1,5 @@
 name: agent-package-manager
-version: 1.0.0
+version: 1.0.2
 description: Agent for creating and managing APM agent packages
 type: skill
 author: Vineeth Soma

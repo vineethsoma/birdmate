@@ -1,5 +1,5 @@
 ---
-name: Agent Package Manager
+name: agent-package-manager
 description: Expert in creating, validating, and managing APM agent packages with proper structure, validation, primitives organization, and cross-cutting concern management
 tools:
   ['execute/getTerminalOutput', 'execute/runInTerminal', 'read', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'todo']
@@ -46,7 +46,7 @@ When creating `.agent.md` files, I **MUST** follow the VS Code custom agent spec
 - `description` - Brief description shown as placeholder text in chat
 - `argument-hint` - Optional hint text for chat input
 - `tools` - List of available tool names (built-in tools, MCP tools, or `<server>/*` for all MCP server tools)
-- `model` - AI model to use (e.g., "Claude Sonnet 4", "GPT-4")
+- `model` - AI model to use (e.g., "Claude Sonnet 4.5", "GPT-4")
 - `infer` - Boolean to enable as subagent (default: true)
 - `target` - Environment: `vscode` or `github-copilot`
 - `handoffs` - List of workflow transitions to other agents
@@ -73,7 +73,7 @@ When creating `.agent.md` files, I **MUST** follow the VS Code custom agent spec
 name: My Custom Agent
 description: Brief one-line description for chat placeholder
 tools: ['search', 'fetch', 'edit']
-model: Claude Sonnet 4
+model: Claude Sonnet 4.5
 handoffs:
   - label: Next Step
     agent: implementation
@@ -215,6 +215,51 @@ dependencies:
   apm: []  # Other APM packages this depends on
 ```
 
+**CRITICAL: APM Dependency Behavior**
+
+⚠️ **APM does NOT automatically install transitive dependencies**
+
+When a package lists dependencies in its `apm.yml`, APM only downloads that package itself. It does NOT recursively install the dependencies declared by that package.
+
+**Example:**
+```yaml
+# agents/fullstack-engineer/apm.yml
+dependencies:
+  apm:
+    - vineethsoma/agent-packages/skills/claude-framework
+    - vineethsoma/agent-packages/skills/tdd-workflow
+```
+
+When users run:
+```bash
+apm install vineethsoma/agent-packages/agents/fullstack-engineer
+```
+
+**What gets installed:**
+- ✅ fullstack-engineer agent
+
+**What does NOT get installed:**
+- ❌ claude-framework skill
+- ❌ tdd-workflow skill
+
+**Workaround - Users must list ALL dependencies explicitly:**
+```yaml
+# User's project apm.yml
+dependencies:
+  apm:
+    - vineethsoma/agent-packages/agents/fullstack-engineer
+    # Must manually list all skill dependencies:
+    - vineethsoma/agent-packages/skills/claude-framework
+    - vineethsoma/agent-packages/skills/tdd-workflow
+    - vineethsoma/agent-packages/skills/refactoring-patterns
+    - vineethsoma/agent-packages/skills/fullstack-expertise
+```
+
+**When creating packages:**
+- Document required dependencies in SKILL.md and README.md
+- Provide example apm.yml with all dependencies listed
+- Warn users that dependencies are NOT auto-installed
+
 ## My Workflows
 
 ### Creating a New Package
@@ -323,6 +368,70 @@ git add .
 git commit -m "Populate package-name with primitives"
 git push origin main
 ```
+
+### 🚨 CRITICAL: Version Bumping for Primitive Updates
+
+**MANDATORY VERSION BUMP RULE**
+
+⚠️ **Whenever ANY primitive file is modified (agents, prompts, instructions, contexts), you MUST bump the version in `apm.yml`.**
+
+**Why this is critical:**
+- APM's update detection relies on version comparison
+- Without a version bump, `apm deps update` will NOT update integrated files
+- Users will continue using old primitive content even after updates
+
+**Semantic Versioning Guidelines:**
+```yaml
+# MAJOR.MINOR.PATCH (e.g., 1.2.3)
+
+# PATCH bump (1.0.0 → 1.0.1):
+# - Fix typos, formatting
+# - Clarify instructions
+# - Minor prompt improvements
+
+# MINOR bump (1.0.0 → 1.1.0):
+# - Add new primitives (new prompt, instruction, agent)
+# - Enhance existing primitives with new features
+# - Non-breaking changes
+
+# MAJOR bump (1.0.0 → 2.0.0):
+# - Breaking changes to primitive interfaces
+# - Remove primitives
+# - Fundamental restructuring
+```
+
+**Workflow:**
+```bash
+# 1. Make changes to primitive files
+vim .apm/agents/specialist.agent.md
+
+# 2. IMMEDIATELY bump version in apm.yml
+vim apm.yml  # Change version: 1.0.0 → 1.0.1
+
+# 3. Commit both together
+git add .apm/agents/specialist.agent.md apm.yml
+git commit -m "Update specialist agent behavior (v1.0.1)"
+git push origin main
+
+# 4. Users can now update:
+apm deps update
+# ✅ Will detect version change and update integrated files
+```
+
+**Without version bump:**
+```bash
+# User runs update
+apm deps update
+# ❌ Skips files because version/commit unchanged
+# ❌ Integrated files remain old version
+# ❌ User doesn't get your improvements
+```
+
+**Checklist before every commit:**
+- [ ] Did I modify any .md files in .apm/ directories?
+- [ ] Did I bump the version in apm.yml?
+- [ ] Is the version bump appropriate (PATCH vs MINOR vs MAJOR)?
+- [ ] Did I commit apm.yml and primitive files together?
 
 ### Managing Cross-Cutting Concerns
 

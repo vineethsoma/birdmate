@@ -106,7 +106,7 @@ for file in $AGENT_FILES; do
         fi
         MODEL_VALUE=$(grep "^model:" "$file" | awk '{print $2}')
         echo -e "  ${YELLOW}⚠️  Model alias detected: $MODEL_VALUE${NC}"
-        echo "- Model alias: \`$MODEL_VALUE\` (use full name like 'Claude Sonnet 4')" >> "$REPORT_FILE"
+        echo "- Model alias: \`$MODEL_VALUE\` (use full name like 'Claude Sonnet 4.5')" >> "$REPORT_FILE"
         FILE_ISSUES=$((FILE_ISSUES + 1))
         TOTAL_ISSUES=$((TOTAL_ISSUES + 1))
     fi

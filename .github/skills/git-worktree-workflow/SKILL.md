@@ -3,9 +3,9 @@ description: Manage parallel development with git worktree for isolated story br
   conflict prevention, and efficient merge coordination
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:38.356733'
+  apm_installed_at: '2025-12-24T16:46:22.964247'
   apm_package: vineethsoma/agent-packages/skills/git-worktree-workflow
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: git-worktree-workflow
 ---
 
@@ -285,15 +285,38 @@ graph LR
 
 ## Commands Reference
 
-| Command | Purpose | Example |
-|---------|---------|---------|
-| `/worktree.init` | Initialize worktree environment | `git worktree list` |
-| `/worktree.create` | Create story branch worktree | `git worktree add -b feat/us1 worktrees/feat-us1` |
-| `/worktree.sync` | Sync worktree with main | `git rebase origin/main` |
-| `/worktree.merge` | Merge story branch to main | `gh pr create ...` |
-| `/worktree.conflicts` | Check for merge conflicts | `git diff origin/main...HEAD` |
-| `/worktree.status` | Monitor all worktrees | `git worktree list` |
-| `/worktree.remove` | Clean up completed worktree | `git worktree remove worktrees/feat-us1` |
+### Automated Scripts
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `worktree-status.sh` | Display all active worktrees with status | `./scripts/worktree-status.sh` |
+| `worktree-create.sh` | Create new worktree for story | `./scripts/worktree-create.sh us1 [base-branch]` |
+| `worktree-remove.sh` | Clean up completed worktree | `./scripts/worktree-remove.sh us1 [--delete-branch] [--force]` |
+| `worktree-conflicts.sh` | Check for merge conflicts | `./scripts/worktree-conflicts.sh us1 [base-branch]` |
+| `worktree-sync.sh` | Sync worktree with main | `./scripts/worktree-sync.sh us1 [base-branch] [--strategy=merge\|rebase]` |
+| `worktree-merge.sh` | Merge story branch to main | `./scripts/worktree-merge.sh us1 [target-branch] [--no-ff\|--squash]` |
+
+### AI-Assisted Prompts
+
+| Prompt | Purpose | When to Use |
+|--------|---------|-------------|
+| `/worktree.init` | Setup worktree environment with guidance | First-time setup, explaining concepts |
+| `/worktree.resolve-conflicts` | Guide conflict resolution | After sync or merge conflicts detected |
+| `/worktree.validate-merge` | Comprehensive pre-merge validation | Before merging story to main |
+
+### Quick Command Map
+
+| Task | Command |
+|------|---------|
+| **Initialize** | Use prompt: `/worktree.init` |
+| **Create worktree** | `./scripts/worktree-create.sh us1` |
+| **Check status** | `./scripts/worktree-status.sh` |
+| **Sync with main** | `./scripts/worktree-sync.sh us1` |
+| **Check conflicts** | `./scripts/worktree-conflicts.sh us1` |
+| **Validate before merge** | Use prompt: `/worktree.validate-merge` |
+| **Merge to main** | `./scripts/worktree-merge.sh us1` |
+| **Resolve conflicts** | Use prompt: `/worktree.resolve-conflicts` |
+| **Clean up** | `./scripts/worktree-remove.sh us1 --delete-branch` |
 
 ---
 
