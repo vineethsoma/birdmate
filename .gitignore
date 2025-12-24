@@ -2,11 +2,53 @@
 # APM dependencies
 apm_modules/
 
-
 # APM integrated agents
 .github/agents/*-apm.agent.md
 .github/agents/*-apm.chatmode.md
 
-
 # APM integrated prompts
 .github/prompts/*-apm.prompt.md
+
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+shared/node_modules/
+
+# Build outputs
+dist/
+build/
+backend/dist/
+frontend/dist/
+shared/dist/
+
+# Environment
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# Database
+database/*.db
+database/*.db-shm
+database/*.db-wal
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
