@@ -3,15 +3,19 @@ description: Spec-Driven Development workflow using GitHub spec-kit for building
   software with structured specifications and intent-driven development
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:38.954567'
+  apm_installed_at: '2025-12-24T17:03:56.296347'
   apm_package: vineethsoma/agent-packages/skills/spec-driven-development
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: spec-driven-development
 ---
 
 # Spec-Driven Development (SDD)
 
 A structured methodology for building production-ready software by defining specifications before implementation. Based on [GitHub spec-kit](https://github.com/github/spec-kit).
+
+> **📦 Prerequisites**: This skill requires [specify CLI](https://github.com/github/spec-kit) installed in your project. Run `specify init` to set up spec-kit prompts and agents in your repository.
+
+> **⚡ Dynamic Prompts**: The `/speckit.*` commands are provided by the specify CLI at runtime, not by this APM skill package. They become available automatically when spec-kit is initialized in your project.
 
 ---
 
@@ -526,16 +530,27 @@ Verifies:
 
 ### Available Commands
 
-| Command | Purpose | When to Use |
-|---------|---------|-------------|
-| `/speckit.constitution` | Define project principles | Start of project, major direction changes |
-| `/speckit.specify` | Write requirements | Every new feature |
-| `/speckit.clarify` | Resolve ambiguities | After specification, before planning |
-| `/speckit.plan` | Technical design | After spec, before tasks |
-| `/speckit.analyze` | Validate consistency | Before implementation |
-| `/speckit.checklist` | Generate quality checklists | For custom validation needs |
-| `/speckit.tasks` | Create task list | After planning |
-| `/speckit.implement` | Execute implementation | Final step, with TDD |
+> **Note**: These commands are provided by the specify CLI (installed via `specify init`), not by this APM skill package. They become available at runtime when spec-kit is set up in your project.
+
+| Command | Purpose | When to Use | Source |
+|---------|---------|-------------|--------|
+| `/speckit.constitution` | Define project principles | Start of project, major direction changes | specify CLI |
+| `/speckit.specify` | Write requirements | Every new feature | specify CLI |
+| `/speckit.clarify` | Resolve ambiguities | After specification, before planning | specify CLI |
+| `/speckit.plan` | Technical design | After spec, before tasks | specify CLI |
+| `/speckit.analyze` | Validate consistency | Before implementation | specify CLI |
+| `/speckit.checklist` | Generate quality checklists | For custom validation needs | specify CLI |
+| `/speckit.tasks` | Create task list | After planning | specify CLI |
+| `/speckit.implement` | Execute implementation | Final step, with TDD | specify CLI |
+
+### Prompts Included in This Skill
+
+| Prompt | Purpose | Usage |
+|--------|---------|-------|
+| `create-spec.prompt.md` | Guide specification creation | Alternative to `/speckit.specify` for manual spec writing |
+| `clarify-spec.prompt.md` | Guide clarification process | Supplement to `/speckit.clarify` for resolving ambiguities |
+
+**Integration**: This skill provides instructions and best practices for using spec-kit. The spec-kit prompts themselves are installed by the specify CLI into `.github/agents/` or `.claude/` directories.
 
 ---
 

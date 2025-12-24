@@ -5,6 +5,8 @@ description: Spec-first development standards - always specify before implementi
 
 # Spec-First Development Instructions
 
+> **📦 Prerequisites**: The `/speckit.*` commands referenced below are provided by [GitHub spec-kit](https://github.com/github/spec-kit) (specify CLI), not by this APM skill. Run `specify init` in your project to install spec-kit prompts and agents.
+
 ## Core Rule: No Implementation Without Specification
 
 **MANDATORY**: Before writing any code, create or update the specification.

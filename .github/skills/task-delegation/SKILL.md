@@ -3,9 +3,9 @@ description: Delegate user stories to specialized agents with clear context, acc
   criteria, and handoff protocols for parallel execution
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-23T17:46:39.280719'
+  apm_installed_at: '2025-12-24T17:03:56.875877'
   apm_package: vineethsoma/agent-packages/skills/task-delegation
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: task-delegation
 ---
 
@@ -415,17 +415,35 @@ Delegation Strategy:
 
 ## Commands Reference
 
-| Command | Purpose | Who Uses |
-|---------|---------|----------|
-| `/delegate.assign` | Assign story to agent | Feature Lead |
-| `/delegate.accept` | Accept story assignment | Agent |
-| `/delegate.progress` | Report progress | Agent |
-| `/delegate.complete` | Mark story complete | Agent |
-| `/delegate.review` | Review completed story | Feature Lead |
-| `/delegate.question` | Ask clarification | Agent |
-| `/delegate.clarify` | Answer question | Feature Lead |
-| `/delegate.blocked` | Report blocker | Agent |
-| `/delegate.reprioritize` | Change priority | Feature Lead |
+### AI-Assisted Prompts
+
+| Prompt | Purpose | Who Uses |
+|--------|---------|----------|
+| `/delegate.assign` | Assign story to agent with complete context | Feature Lead |
+| `/delegate.review` | Review completed story for merge readiness | Feature Lead |
+| `/delegate.clarify` | Answer agent questions and provide clarifications | Feature Lead |
+| `/delegate.reprioritize` | Change story priority and resequence backlog | Feature Lead |
+
+### Communication Flow
+
+| Action | Command | Direction |
+|--------|---------|-----------|
+| Assign story | `/delegate.assign` | Feature Lead → Agent |
+| Report progress | Agent update | Agent → Feature Lead |
+| Mark complete | Agent notification | Agent → Feature Lead |
+| Review story | `/delegate.review` | Feature Lead validates |
+| Ask question | Agent request | Agent → Feature Lead |
+| Answer question | `/delegate.clarify` | Feature Lead → Agent |
+| Change priority | `/delegate.reprioritize` | Feature Lead decision |
+
+### Quick Reference
+
+| Scenario | Use This Prompt |
+|----------|-----------------|
+| Starting new story | `/delegate.assign us[N] agent-name` |
+| Story completed | `/delegate.review us[N]` |
+| Agent blocked | `/delegate.clarify us[N]` |
+| Priorities change | `/delegate.reprioritize` |
 
 ---
 
