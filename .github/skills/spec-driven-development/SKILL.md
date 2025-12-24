@@ -3,7 +3,7 @@ description: Spec-Driven Development workflow using GitHub spec-kit for building
   software with structured specifications and intent-driven development
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-24T17:03:56.296347'
+  apm_installed_at: '2025-12-24T18:20:18.712185'
   apm_package: vineethsoma/agent-packages/skills/spec-driven-development
   apm_version: 1.1.0
 name: spec-driven-development

@@ -3,7 +3,7 @@ description: Delegate user stories to specialized agents with clear context, acc
   criteria, and handoff protocols for parallel execution
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-24T17:03:56.875877'
+  apm_installed_at: '2025-12-24T18:20:19.743416'
   apm_package: vineethsoma/agent-packages/skills/task-delegation
   apm_version: 1.1.0
 name: task-delegation

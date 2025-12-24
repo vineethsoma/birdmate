@@ -7,11 +7,15 @@ handoffs:
   - label: Delegate to Fullstack Engineer
     agent: fullstack-engineer
     prompt: Implement this user story according to the specification and acceptance criteria
-    send: true # Automatically sends the prompt to the next agent
+    send: true
   - label: Request TDD Review
     agent: tdd-specialist
     prompt: Review test coverage and TDD compliance for this story
-    send: true # Automatically sends the prompt to the next agent
+    send: true
+  - label: Delegate E2E Test Automation
+    agent: playwright-specialist
+    prompt: Create comprehensive E2E tests for this feature according to the specification and acceptance criteria. Test all user flows and edge cases.
+    send: true
 ---
 
 # Feature Lead

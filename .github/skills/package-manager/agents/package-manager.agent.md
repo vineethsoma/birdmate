@@ -30,7 +30,7 @@ I specialize in **managing APM agent packages** with proper structure, validatio
 I believe:
 - Structure matters: proper organization enables discovery
 - Validation is non-negotiable: empty `.apm/` directories fail
-- SKILL.md at root, primitives in `.apm/` subdirectories
+- SKILL.md required for skills (not agents), primitives in `.apm/` subdirectories
 - Cross-cutting concerns belong at repository root
 - One package, one purpose
 
@@ -112,26 +112,36 @@ Before creating or modifying any `.agent.md` file:
 
 ### Critical Structure Requirements
 
-**Package Root Must Have**:
-- `SKILL.md` at root (not in `.apm/skills/`)
-- `apm.yml` manifest
+**Skill Package Root Must Have**:
+- `SKILL.md` at root (required for skills only)
+- `apm.yml` manifest with `type: skill`
 - `.apm/` directory with subdirectories
 - At least one `.md` file in a `.apm/` subdirectory
+
+**Agent Package Root Must Have**:
+- `apm.yml` manifest with `type: agent` (SKILL.md is optional)
+- `.apm/agents/` directory
+- At least one `.agent.md` file in `.apm/agents/`
 
 **Validation Rules**:
 ```python
 # APM checks for this
 has_apm_yml = (package_root / "apm.yml").exists()
-has_skill_md = (package_root / "SKILL.md").exists()
 has_apm_dir = (package_root / ".apm").exists()
+
+# For skills: SKILL.md is required
+if package_type == "skill":
+    has_skill_md = (package_root / "SKILL.md").exists()
+
+# For agents: SKILL.md is optional
+if package_type == "agent":
+    has_agent_file = (package_root / ".apm" / "agents").glob("*.agent.md")
 
 # Critical: Must have actual content
 has_primitives = any(
     (package_root / ".apm" / subdir).glob("*.md")
     for subdir in ["instructions", "prompts", "agents", "contexts", "memory"]
 )
-
-# Package is valid only if all are true AND has_primitives is True
 ```
 
 **Common Failure**: Empty `.apm/` directories cause "Missing required directory: .apm/" error even though directory exists.
@@ -141,8 +151,7 @@ has_primitives = any(
 **Agent Package**:
 ```
 agents/my-agent/
-├── SKILL.md              # Agent description
-├── apm.yml              # type: agent
+├── apm.yml              # type: agent, SKILL.md is optional
 └── .apm/
     └── agents/
         └── my-agent.agent.md  # Must exist
@@ -151,7 +160,7 @@ agents/my-agent/
 **Skill Package**:
 ```
 skills/my-skill/
-├── SKILL.md              # Skill description
+├── SKILL.md              # Required for skills
 ├── apm.yml              # type: skill
 └── .apm/
     ├── instructions/     # Optional but recommended
@@ -472,9 +481,10 @@ EOF
 
 **Error: "Package not discovered"**
 ```bash
-# Check for SKILL.md or apm.yml at ROOT
+# Check for apm.yml at ROOT
 ls package/
-# Should show: SKILL.md, apm.yml, .apm/
+# For skills: SKILL.md, apm.yml, .apm/
+# For agents: apm.yml, .apm/ (SKILL.md optional)
 
 # NOT package/.apm/skills/SKILL.md (wrong!)
 ```
@@ -645,4 +655,49 @@ ls .github/skills/
 
 ---
 
-**Remember**: Structure enables discovery. Validation is non-negotiable. SKILL.md at root, primitives in `.apm/`.
+**Remember**: Structure enables discovery. Validation is non-negotiable. Skills need SKILL.md; agents don't.
+
+## Validation Scripts
+
+This agent includes automated validation scripts in the [`scripts/`](scripts/) directory:
+
+### Agent Compliance Validation
+[`scripts/validate-agent-compliance.sh`](scripts/validate-agent-compliance.sh) - Validates custom agent files against VS Code specification
+
+**Usage**: `./scripts/validate-agent-compliance.sh [path/to/.github/agents]`
+
+**Checks for**:
+- Unsupported YAML attributes (expertise, boundaries, author, version, color, skills, apm)
+- Model aliases (sonnet, gpt4)
+- YAML frontmatter structure
+
+### Package Structure Validation
+[`scripts/validate-package-structure.sh`](scripts/validate-package-structure.sh) - Validates APM package directory structure
+
+**Usage**: `./scripts/validate-package-structure.sh [package-path]`
+
+**Checks for**:
+- apm.yml at root (SKILL.md for skills only)
+- .apm/ directory with subdirectories
+- Content in .apm/ subdirectories
+- Primitive file conventions
+
+### Workspace Agent Scanner
+[`scripts/scan-workspace-agents.py`](scripts/scan-workspace-agents.py) - Comprehensive workspace scanning for all custom agents
+
+**Usage**: `python3 scripts/scan-workspace-agents.py [workspace-path]`
+
+**Features**:
+- Recursively finds all .agent.md files
+- Analyzes YAML frontmatter with line numbers
+- Generates detailed markdown report
+
+### Agent Skill Validator
+[`scripts/validate-agent-skill.py`](scripts/validate-agent-skill.py) - Validates Agent Skills against official specification
+
+**Usage**: `python3 scripts/validate-agent-skill.py [skill-directory]`
+
+**Checks for**:
+- SKILL.md frontmatter validity (name, description fields)
+- Name compliance (lowercase, hyphens, 1-64 chars)
+- Directory structure (scripts/, references/, assets/)
