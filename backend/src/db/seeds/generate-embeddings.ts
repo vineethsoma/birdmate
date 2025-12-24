@@ -8,9 +8,20 @@
 import OpenAI from 'openai';
 import { getDatabase, transaction } from '../client.js';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization - OpenAI client created when needed, not at import time
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is required');
+    }
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 interface Bird {
   id: string;
@@ -56,9 +67,7 @@ function generateEmbeddingText(bird: Bird): string {
 export async function generateEmbeddings(): Promise<number> {
   console.log('🤖 Generating embeddings...');
   
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY environment variable is required');
-  }
+  const client = getOpenAIClient();
   
   try {
     const db = getDatabase();
@@ -80,7 +89,7 @@ export async function generateEmbeddings(): Promise<number> {
       const texts = batch.map(generateEmbeddingText);
       
       // Generate embeddings in batch
-      const response = await openai.embeddings.create({
+      const response = await client.embeddings.create({
         model: 'text-embedding-3-small',
         input: texts,
         encoding_format: 'float',

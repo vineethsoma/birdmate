@@ -2,6 +2,9 @@
  * Run all seeding scripts in order
  */
 
+// Load environment variables FIRST before any other imports
+import 'dotenv/config';
+
 import { downloadTaxonomy } from './download-taxonomy.js';
 import { seedTaxonomy } from './seed-taxonomy.js';
 import { fetchImages } from './fetch-images.js';

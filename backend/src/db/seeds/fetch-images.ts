@@ -63,7 +63,8 @@ export async function fetchImages(): Promise<number> {
           `);
           
           images.forEach((img, index) => {
-            stmt.run(bird.id, img.previewUrl, img.photographer, img.license, index === 0);
+            // SQLite needs 0/1 for boolean, not true/false
+            stmt.run(bird.id, img.previewUrl, img.photographer, img.license, index === 0 ? 1 : 0);
           });
         });
         

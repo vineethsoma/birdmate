@@ -67,15 +67,18 @@ export async function seedTaxonomy(): Promise<number> {
       throw new Error('Invalid CSV: no data rows');
     }
     
-    // Parse header
+    // Parse header - eBird uses COMMON_NAME and SCIENTIFIC_NAME
     const headers = parseCSVLine(lines[0]!);
     const speciesCodeIdx = headers.indexOf('SPECIES_CODE');
-    const comNameIdx = headers.indexOf('PRIMARY_COM_NAME');
-    const sciNameIdx = headers.indexOf('SCI_NAME');
+    const comNameIdx = headers.indexOf('COMMON_NAME');
+    const sciNameIdx = headers.indexOf('SCIENTIFIC_NAME');
     const familyIdx = headers.indexOf('FAMILY_COM_NAME');
     const categoryIdx = headers.indexOf('CATEGORY');
     
+    console.log(`  Found columns: ${headers.slice(0, 5).join(', ')}...`);
+    
     if (speciesCodeIdx === -1 || comNameIdx === -1 || sciNameIdx === -1) {
+      console.error(`  Available columns: ${headers.join(', ')}`);
       throw new Error('Missing required columns in CSV');
     }
     
