@@ -1,0 +1,5 @@
+name: git-worktree-workflow
+version: 1.1.0
+description: Manage parallel development with git worktree for isolated story branches
+author: Vineeth Soma
+type: skill

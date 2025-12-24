@@ -1,0 +1,10 @@
+name: feature-orchestration
+version: 1.0.0
+description: Coordinate multi-story feature development with context management, consistency validation, and progress tracking
+author: Vineeth Soma
+type: skill
+
+dependencies:
+  apm:
+    - vineethsoma/agent-packages/skills/spec-driven-development
+    - vineethsoma/agent-packages/skills/git-worktree-workflow

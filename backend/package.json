@@ -1,0 +1,53 @@
+{
+  "name": "birdmate-backend",
+  "version": "0.1.0",
+  "description": "Natural language bird search API",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "db:migrate": "tsx src/db/migrations/run.ts",
+    "db:seed": "tsx src/db/seeds/run-all.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "cors": "^2.8.5",
+    "dompurify": "^3.0.8",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "jsdom": "^23.0.1",
+    "openai": "^4.73.0",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/cors": "^2.8.17",
+    "@types/dompurify": "^3.0.5",
+    "@types/express": "^4.17.21",
+    "@types/jsdom": "^21.1.6",
+    "@types/node": "^20.10.6",
+    "@types/supertest": "^6.0.3",
+    "@types/validator": "^13.11.7",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "supertest": "^7.1.4",
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-node": "^2.1.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
