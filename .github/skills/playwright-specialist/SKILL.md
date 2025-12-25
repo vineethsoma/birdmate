@@ -3,10 +3,10 @@ description: E2E testing expert agent using Playwright automation for comprehens
   browser testing Use when working with playwright, specialist.
 metadata:
   apm_commit: unknown
-  apm_content_hash: 5d8d7babf69e61d950252f4f9dc049b5322c89d7c86665b11cf35b4478d0c961
-  apm_installed_at: '2025-12-24T23:00:20.687517'
+  apm_content_hash: f7075e63841fa7ddf6f016383c2abeaed379955d6059d5cbcbdb1011dae5834d
+  apm_installed_at: '2025-12-24T23:12:31.074400'
   apm_package: vineethsoma/agent-packages/agents/playwright-specialist
-  apm_version: 1.0.3
+  apm_version: 1.0.5
 name: playwright-specialist
 ---
 

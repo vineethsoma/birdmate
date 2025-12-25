@@ -1,58 +1,143 @@
 ---
-description: Coordinate multi-story feature development with context management, consistency
-  validation, and progress tracking across parallel workstreams
+description: Story orchestration with progress tracking, standardized directory structure,
+  and validation
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-24T18:20:14.547275'
+  apm_installed_at: '2025-12-25T16:52:52.678330'
   apm_package: vineethsoma/agent-packages/skills/feature-orchestration
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: feature-orchestration
+type: skill
+version: 1.1.0
 ---
 
 # Feature Orchestration
 
-Manage complex features spanning multiple user stories with parallel development, cross-story consistency, and adherence to feature specifications.
+Coordinate multi-story features with consistent directory structure, progress tracking, and validation.
+
+## What This Skill Provides
+
+- **Story initialization**: Auto-create standardized directory structure
+- **Story tracker template**: Track acceptance criteria, tasks, and progress
+- **Validation**: Verify story tracker completeness before implementation
+- **AI-guided workflow**: Fill story tracker with acceptance criteria and task breakdown
+
+## When to Use
+
+- Starting a new user story within a feature
+- Tracking story progress and status
+- Coordinating multi-story features
+- Validating story readiness before implementation
+
+## Quick Start
+
+### 1. Initialize Story
+
+```bash
+# From project root
+./scripts/init-story.sh us-001
+```
+
+Creates:
+```
+specs/{feature}/stories/us-001/
+├── story-tracker.md          ← Track progress
+├── delegation/               ← Delegation briefs
+├── checklists/               ← Quality gates
+└── retro/                    ← Post-merge retro
+```
+
+### 2. Fill Story Tracker
+
+Use AI-guided prompt:
+```
+/fill-story-tracker
+```
+
+Guides you through:
+- Story overview
+- Acceptance criteria (specific, testable)
+- Task breakdown (1-4 hour tasks)
+- Dependencies
+- Implementation status
+
+### 3. Validate Completeness
+
+```bash
+./scripts/validate-story-tracker.sh us-001
+```
+
+Checks:
+- [ ] All required sections present
+- [ ] No [Fill] placeholders remaining
+- [ ] Tasks defined with checkboxes
+- [ ] Status fields initialized
+
+Exit code 0 = passed, 1 = failed (for automated gates).
+
+## Directory Structure Convention
+
+All process artifacts live in:
+```
+specs/{feature}/stories/{story-id}/
+├── delegation/                    # Delegation briefs
+│   ├── {agent-name}.delegation.md
+│   └── completion-reports/
+│       └── {agent-name}.report.md
+├── checklists/                    # Quality gate checklists
+│   ├── tdd-compliance.md
+│   ├── claude-audit.md
+│   └── e2e-test-plan.md
+└── retro/                         # Post-merge retrospective
+    ├── retro.md
+    └── handoff.yml
+```
+
+## Integration with Other Skills
+
+- **Spec-driven-development**: Story tracker references spec.md, plan.md, tasks.md
+- **Task-delegation**: Delegation briefs stored in delegation/
+- **TDD-workflow**: TDD compliance checklist in checklists/
+- **Retrospective-workflow**: Post-merge retro in retro/
+
+## Configuration
+
+Requires `.apm-workflow.yml` in project root:
+```yaml
+current_feature: feature-id
+```
+
+Scripts auto-load this configuration to determine directory paths.
+
+## Validation Criteria
+
+Story tracker must have:
+- Story Overview (user value, context)
+- Acceptance Criteria (specific, testable, no vague statements)
+- Tasks (atomic, 1-4 hours each, with checkboxes)
+- Dependencies (upstream/downstream stories)
+- Implementation Status (status, assigned to, dates)
+
+## Scripts
+
+- `init-story.sh <story-id>` - Initialize story directory structure
+- `validate-story-tracker.sh <story-id>` - Verify completeness (exit 0/1)
+
+## Prompts
+
+- `fill-story-tracker` - AI-guided story tracker completion
+
+## Templates
+
+- `story-tracker.template.md` - Progress tracking template
 
 ---
 
-## Core Responsibilities
+## Legacy Core Responsibilities (Reference)
 
 ### 1. Feature Context Management
 
 **Maintain the big picture across all user stories**
-
-```markdown
-## Feature Context Template
-
-**Feature**: [Feature Name from Constitution/Spec]
-**Stories**: [List of user stories with status]
-**Active Branches**: [Worktree branches currently WIP]
-**Dependencies**: [Cross-story dependencies]
-**Last Sync**: [When context was last updated]
-
-### Story Handoffs
-- Story A → Story B: [What state/data/contracts must be ready]
-- Story B → Story C: [Dependencies and prerequisites]
-
-### Known Issues
-- [Cross-story concerns that need resolution]
-```
-
-**Commands**:
-- `/feature.context.update`: Update feature context after story completion
-- `/feature.context.review`: Review current feature state vs. spec
-
-**Workflow**:
-1. **At feature start**: Initialize context from spec/plan
-2. **After each story**: Update dependencies, note handoff requirements
-3. **Before new story**: Check context for prerequisites
-4. **At merge time**: Validate feature completeness against spec
-
----
-
-### 2. Consistency Validation
-
-**Ensure all stories align with constitution and feature spec**
 
 **Validation Checklist**:
 ```markdown

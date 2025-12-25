@@ -1,0 +1,7 @@
+name: retrospective-workflow
+version: 1.0.0
+description: Post-story retrospective workflow with templates, scripts, and automated handoff generation
+type: skill
+author: Vineeth Soma
+dependencies:
+  apm: []

@@ -1,5 +1,5 @@
 name: tdd-workflow
-version: 1.0.0
-description: Test-Driven Development workflow with file safety protocols and Red-Green-Refactor cycle
+version: 1.1.0
+description: Test-Driven Development workflow with testing principles, database testing patterns, and Red-Green-Refactor cycle
 author: Vineeth Soma
 type: skill

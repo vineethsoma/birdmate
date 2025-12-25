@@ -20,6 +20,7 @@ dependencies:
     - vineethsoma/agent-packages/skills/feature-orchestration
     - vineethsoma/agent-packages/skills/git-worktree-workflow
     - vineethsoma/agent-packages/skills/task-delegation
+    - vineethsoma/agent-packages/skills/retrospective-workflow
   mcp:
     - microsoft/playwright-mcp
 scripts: {}

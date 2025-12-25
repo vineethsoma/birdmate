@@ -1,5 +1,5 @@
 name: claude-framework
-version: 1.0.0
-description: CLAUDE Framework coding standards for code quality, naming, error handling, security, and testing
+version: 1.1.0
+description: CLAUDE framework code quality audit with checklist, validation, and standards enforcement
 author: Vineeth Soma
 type: skill

@@ -3,9 +3,9 @@ description: Test-Driven Development workflow with file safety protocols and dev
   best practices
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-24T18:20:20.521860'
+  apm_installed_at: '2025-12-25T16:13:04.974228'
   apm_package: vineethsoma/agent-packages/skills/tdd-workflow
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: tdd-workflow
 ---
 

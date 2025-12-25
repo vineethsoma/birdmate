@@ -1,0 +1,10 @@
+# APM Workflow Configuration
+# This file configures workflow automation skills for directory structure patterns
+
+current_feature: bird-search
+directory_structure:
+  specs_root: specs
+  stories_subdir: stories
+  delegation_subdir: delegation
+  checklists_subdir: checklists
+  retro_subdir: retro

@@ -57,6 +57,32 @@ Apply these production-ready standards to all code.
 **E-1: Fail Fast**
 - Validate inputs immediately
 - Throw errors for invalid states
+- **For mathematical functions**: Validation ranges MUST match the mathematical domain
+
+**Mathematical Validation Pattern**:
+```typescript
+// Process:
+// 1. Identify the mathematical function being used
+// 2. Look up its output range
+// 3. Set validation constraints to match
+
+// Example: Cosine similarity returns [-1, 1]
+function searchBySimilarity(
+  queryEmbedding: number[],
+  minScore: number = -1  // ✅ Match cosine range
+): Result[] {
+  if (minScore < -1 || minScore > 1) {  // ✅ Correct domain
+    throw new Error('MinScore must be between -1 and 1');
+  }
+  // ... implementation
+}
+
+// Common ranges:
+// - Cosine similarity: [-1, 1]
+// - Euclidean distance: [0, ∞)
+// - Probability: [0, 1]
+// - Dot product: (-∞, ∞)
+```
 
 **E-2: Descriptive Error Messages**
 - Include context: what failed, why, what to do
