@@ -16,11 +16,16 @@ const DOMPurify = DOMPurifyLib(window);
  * Sanitize string input
  * - Escape HTML entities
  * - Trim whitespace
- * - Limit length
+ * - Does NOT limit length (validation should happen at service layer)
  */
-export function sanitizeString(input: string, maxLength = 500): string {
-  // Trim and limit length
-  let sanitized = validator.trim(input).slice(0, maxLength);
+export function sanitizeString(input: string, maxLength?: number): string {
+  // Trim whitespace
+  let sanitized = validator.trim(input);
+  
+  // Limit length if specified (but not by default for search queries)
+  if (maxLength !== undefined) {
+    sanitized = sanitized.slice(0, maxLength);
+  }
   
   // Remove HTML tags and escape entities
   sanitized = DOMPurify.sanitize(sanitized, {
