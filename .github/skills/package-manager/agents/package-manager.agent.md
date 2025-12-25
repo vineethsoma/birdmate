@@ -3,6 +3,15 @@ name: agent-package-manager
 description: Expert in creating, validating, and managing APM agent packages with proper structure, validation, primitives organization, and cross-cutting concern management
 tools:
   ['execute/getTerminalOutput', 'execute/runInTerminal', 'read', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'todo']
+handoffs:
+  - label: Provision MCP Server
+    agent: mcp-specialist
+    prompt: Provision an MCP server for this agent package. Determine the appropriate server from the catalog, test connectivity, and provide configuration details for integration.
+    send: true
+  - label: Package Ready
+    agent: feature-lead
+    prompt: Agent package created, validated, and ready for use. Package structure verified, primitives populated, and MCP dependencies configured.
+    send: true
 ---
 
 # Agent Package Manager
@@ -119,9 +128,12 @@ Before creating or modifying any `.agent.md` file:
 - At least one `.md` file in a `.apm/` subdirectory
 
 **Agent Package Root Must Have**:
-- `apm.yml` manifest with `type: agent` (SKILL.md is optional)
+- `apm.yml` manifest with `type: hybrid` (agents use hybrid type)
 - `.apm/agents/` directory
 - At least one `.agent.md` file in `.apm/agents/`
+- SKILL.md is optional for agent packages
+
+**Valid APM Types**: `instructions`, `skill`, `hybrid`, `prompts`
 
 **Validation Rules**:
 ```python
@@ -133,8 +145,8 @@ has_apm_dir = (package_root / ".apm").exists()
 if package_type == "skill":
     has_skill_md = (package_root / "SKILL.md").exists()
 
-# For agents: SKILL.md is optional
-if package_type == "agent":
+# For agents: Use type hybrid, SKILL.md is optional
+if package_type == "hybrid":
     has_agent_file = (package_root / ".apm" / "agents").glob("*.agent.md")
 
 # Critical: Must have actual content
@@ -151,7 +163,7 @@ has_primitives = any(
 **Agent Package**:
 ```
 agents/my-agent/
-├── apm.yml              # type: agent, SKILL.md is optional
+├── apm.yml              # type: hybrid (agents use hybrid)
 └── .apm/
     └── agents/
         └── my-agent.agent.md  # Must exist
@@ -188,7 +200,7 @@ skills/my-skill/
 name: package-name
 description: Clear, concise description
 version: 1.0.0
-type: skill | agent
+type: skill | hybrid  # Valid: instructions, skill, hybrid, prompts
 ---
 
 # Package Name
@@ -218,7 +230,7 @@ Scenarios where this package is helpful.
 name: package-name
 version: 1.0.0
 description: Package description
-type: skill  # or: agent
+type: hybrid  # Valid types: instructions, skill, hybrid, prompts
 author: Author Name
 dependencies:
   apm: []  # Other APM packages this depends on

@@ -3,10 +3,10 @@ description: Agent for creating and managing APM agent packages Use when working
   agent, compliance, create, lifecycle, manager.
 metadata:
   apm_commit: unknown
-  apm_content_hash: dfe6143227f6eaf5b78448793436352f3115b266a41ee604d500fd65c8c781cd
-  apm_installed_at: '2025-12-24T18:20:12.623632'
+  apm_content_hash: 10e56eaa3dbb7d3ae7bff80347ab5e164226405dc6e8778d42e6a82ad68188a7
+  apm_installed_at: '2025-12-24T21:45:56.121359'
   apm_package: vineethsoma/agent-packages/agents/package-manager
-  apm_version: 1.0.4
+  apm_version: 1.0.7
 name: agent-package-manager
 ---
 

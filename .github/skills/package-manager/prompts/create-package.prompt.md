@@ -52,7 +52,7 @@ cd skills/my-skill
 name: my-package
 description: Clear, concise description of what this package does
 version: 1.0.0
-type: skill  # or: agent
+type: skill  # Valid: instructions, skill, hybrid, prompts
 ---
 
 # My Package
@@ -94,7 +94,7 @@ When installed, this package provides:
 name: my-package
 version: 1.0.0
 description: Package description
-type: skill  # or: agent
+type: hybrid  # Valid: instructions, skill, hybrid, prompts
 author: Your Name
 dependencies:
   apm: []  # Add dependencies if needed
