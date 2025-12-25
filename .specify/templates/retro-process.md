@@ -128,11 +128,45 @@ tracking:
 ```
 
 **Agent Package Manager receives handoff and**:
-1. Reviews each change request
-2. Implements changes to primitives
-3. Bumps versions in affected skills/agents
-4. Updates `.memory/retro-log.md`
-5. Commits with message: `chore(retro): Implement US-XXX learnings`
+
+1. **Update Primitives**
+   - Review each change request
+   - Implement changes to primitives (agents, prompts, instructions)
+   - Validate package structure with APM tooling
+
+2. **Version Management** (CRITICAL)
+   - Bump version in `apm.yml` for affected packages (PATCH/MINOR/MAJOR)
+   - MANDATORY: Any primitive change requires version bump
+   - Without version bump, `apm deps update` won't detect changes
+
+3. **Commit and Push**
+   - Commit primitives + apm.yml together
+   - Update `.memory/retro-log.md`
+   - Push to agent-packages repository
+   - Message: `chore(retro): Implement US-XXX learnings (v1.x.x)`
+
+4. **Propagate to Dependent Projects**
+   - Identify projects using updated primitives (e.g., birdmate)
+   - For each dependent project:
+     ```bash
+     cd /path/to/dependent-project
+     apm deps update
+     ```
+   - Verify updated primitives integrated to `.github/` or `.claude/`
+
+5. **Update Dependencies** (if new primitives added)
+   - Add new dependencies to project's `apm.yml`:
+     ```yaml
+     dependencies:
+       apm:
+         - vineethsoma/agent-packages/agents/new-agent
+     ```
+   - Run `apm install` to integrate new primitives
+
+6. **Validate Integration**
+   - Check primitives integrated correctly in dependent projects
+   - Test in context (run prompts, verify agent behavior)
+   - Commit dependency updates to each dependent project
 
 ### Step 6: Close Retro
 
