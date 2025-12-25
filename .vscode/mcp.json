@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "playwright-mcp-server",
+        "node",
+        "cli.js",
+        "--headless"
+      ]
+    }
+  }
+}
