@@ -137,7 +137,7 @@ tracking:
 2. **Version Management** (CRITICAL)
    - Bump version in `apm.yml` for affected packages (PATCH/MINOR/MAJOR)
    - MANDATORY: Any primitive change requires version bump
-   - Without version bump, `apm deps update` won't detect changes
+   - Without version bump, `apm install --update` won't detect changes
 
 3. **Commit and Push**
    - Commit primitives + apm.yml together
@@ -150,7 +150,7 @@ tracking:
    - For each dependent project:
      ```bash
      cd /path/to/dependent-project
-     apm deps update
+     apm install --update
      ```
    - Verify updated primitives integrated to `.github/` or `.claude/`
 
