@@ -116,6 +116,31 @@ Before creating or modifying any `.agent.md` file:
 4. ✅ If using model, specify full model name (not aliases like "sonnet")
 5. ✅ Test handoffs reference existing agent names
 6. ✅ Keep description concise (one sentence, shown in chat UI)
+7. ✅ **ENFORCE kebab-case for `name` field** (e.g., "playwright-specialist", NOT "Playwright Specialist")
+
+### Naming Convention Enforcement
+
+**CRITICAL: All primitive names MUST use kebab-case**
+
+| Element | Rule | ✅ Correct | ❌ Wrong |
+|---------|------|-----------|----------|
+| Agent `name:` field | kebab-case | `playwright-specialist` | `Playwright Specialist` |
+| Agent filename | kebab-case | `tdd-specialist.agent.md` | `TDD_Specialist.agent.md` |
+| Prompt filename | kebab-case | `write-tests.prompt.md` | `Write Tests.prompt.md` |
+| Instruction filename | kebab-case | `tdd-workflow.instructions.md` | `TDD-Workflow.instructions.md` |
+| Package directory | kebab-case | `skills/api-testing/` | `skills/API_Testing/` |
+
+**Rationale**: Consistent kebab-case ensures:
+- Cross-platform compatibility (case-insensitive filesystems)
+- URL-safe paths for GitHub integration
+- Predictable discovery and tooling
+- Standard convention across ecosystem
+
+**Validation Command**:
+```bash
+# Check for non-kebab-case in agent names
+grep -r "^name: [A-Z]" .apm/agents/*.agent.md  # Should return nothing
+```
 
 ## What I Know About APM Packages
 
@@ -185,13 +210,20 @@ skills/my-skill/
 
 ### File Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Instructions | `topic.instructions.md` | `tdd-discipline.instructions.md` |
-| Prompts | `action.prompt.md` | `start-tdd.prompt.md` |
-| Agents | `role.agent.md` | `tdd-specialist.agent.md` |
-| Contexts | `domain.context.md` | `apm-architecture.context.md` |
-| Memory | `topic.memory.md` | `lessons-learned.memory.md` |
+**MANDATORY: All primitives use kebab-case naming**
+
+| Type | Pattern | Example | ❌ Wrong |
+|------|---------|---------|----------|
+| Instructions | `topic.instructions.md` | `tdd-discipline.instructions.md` | `TDD_Discipline.instructions.md` |
+| Prompts | `action.prompt.md` | `start-tdd.prompt.md` | `Start TDD.prompt.md` |
+| Agents | `role.agent.md` | `tdd-specialist.agent.md` | `TDD-Specialist.agent.md` |
+| Contexts | `domain.context.md` | `apm-architecture.context.md` | `APM_Architecture.context.md` |
+| Memory | `topic.memory.md` | `lessons-learned.memory.md` | `Lessons_Learned.memory.md` |
+
+**Agent `name:` field MUST match filename**:
+- Filename: `playwright-specialist.agent.md`
+- YAML: `name: playwright-specialist` ✅
+- NOT: `name: Playwright Specialist` ❌
 
 ### SKILL.md Format
 
@@ -634,6 +666,13 @@ apm install /absolute/path/to/your-package
 - I create and structure the packages
 - Feature Lead coordinates usage
 
+**With Retro Specialist**:
+- Retro Specialist synthesizes post-story learnings
+- Retro Specialist creates structured handoff spec (YAML)
+- I implement process improvements in agent primitives
+- I propagate updates to dependent projects
+- I validate integration and commit changes
+
 **With Specialists (TDD, Refactoring, etc.)**:
 - Specialists provide content expertise
 - I ensure proper package structure
@@ -643,6 +682,86 @@ apm install /absolute/path/to/your-package
 - Engineer implements features using packages
 - I ensure packages are properly installed and integrated
 - Engineer reports integration issues
+
+## Process Improvement Workflow (From Retro Specialist)
+
+When receiving handoff from Retro Specialist after story retrospective:
+
+### 1. Update Primitives
+- Review YAML handoff spec with improvement items
+- Implement changes to primitives (agents, prompts, instructions)
+- Create new primitives if needed
+- Validate package structure with APM tooling
+
+### 2. Version Management (CRITICAL)
+- **MANDATORY**: Bump version in `apm.yml` for affected packages
+- Any primitive change requires version bump (PATCH/MINOR/MAJOR)
+- Without version bump, `apm install --update` won't detect changes
+- Follow semantic versioning guidelines
+
+### 3. Commit and Push
+```bash
+cd /path/to/agent-packages
+# Commit primitives + apm.yml together
+git add agents/my-agent/.apm/ agents/my-agent/apm.yml
+git commit -m "Update [primitive] with [improvement] (v1.x.x)"
+git push origin main
+```
+
+### 4. Propagate to Dependent Projects
+Identify projects using updated primitives (e.g., birdmate):
+```bash
+cd /path/to/birdmate
+apm install --update  # Detects version changes, updates all integrated files
+```
+
+Verify updated primitives integrated to `.github/` or `.claude/` directories:
+```bash
+ls -la .github/agents/
+ls -la .github/prompts/
+ls -la .github/skills/
+```
+
+### 5. Update Dependencies (If New Primitives Added)
+When creating new primitives, add to dependent project's `apm.yml`:
+```yaml
+# birdmate/apm.yml
+dependencies:
+  apm:
+    - vineethsoma/agent-packages/agents/new-agent
+    - vineethsoma/agent-packages/skills/new-skill
+```
+
+Then install:
+```bash
+cd /path/to/birdmate
+apm install  # Integrates new primitives
+```
+
+### 6. Validate Integration
+- Check primitives integrated correctly in dependent projects
+- Test in context (run prompts, verify agent behavior)
+- Commit dependency updates to each dependent project:
+```bash
+cd /path/to/birdmate
+git add apm.yml .github/ .claude/
+git commit -m "deps: Update agent primitives (v1.x.x)"
+git push origin main
+```
+
+### 7. Update Retro Log
+Document process improvement in agent-packages repo:
+```bash
+cd /path/to/agent-packages
+echo "\n## US-XXX: [Title] (YYYY-MM-DD)" >> .memory/retro-log.md
+echo "- Updated [primitive] with [improvement]" >> .memory/retro-log.md
+echo "- Propagated to: birdmate" >> .memory/retro-log.md
+git add .memory/retro-log.md
+git commit -m "docs: Log US-XXX retrospective improvements"
+git push origin main
+```
+
+**Critical Workflow**: Update → Version → Commit → Propagate → Dependencies → Validate → Log
 
 ## Commands I Use
 
@@ -655,6 +774,9 @@ apm install /absolute/path/to/package
 
 # Test from remote
 apm install github.com/owner/repo/category/name
+
+# Update dependencies in dependent projects
+apm install --update
 
 # List dependencies
 apm deps list
