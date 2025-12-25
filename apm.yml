@@ -9,6 +9,7 @@ dependencies:
     - vineethsoma/agent-packages/agents/feature-lead
     - vineethsoma/agent-packages/agents/package-manager
     - vineethsoma/agent-packages/agents/playwright-specialist
+    - vineethsoma/agent-packages/agents/retro-specialist
     # Skills
     - vineethsoma/agent-packages/skills/spec-driven-development
     - vineethsoma/agent-packages/skills/playwright-testing
