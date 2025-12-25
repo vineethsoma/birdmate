@@ -4,10 +4,10 @@ description: Expert full-stack engineer delivering production-ready code with Sp
   Use when working with engineer, fullstack.
 metadata:
   apm_commit: unknown
-  apm_content_hash: d37b1dd69e9ecdb8f2f2f11bf5ce41f00c59151444cfd48f3212f58c64087357
-  apm_installed_at: '2025-12-24T21:45:55.423074'
+  apm_content_hash: c0eab0611fb4d1f373e1148ef06ee5d25ff7b86651e6bd62581f3f6b2fe3756a
+  apm_installed_at: '2025-12-24T22:50:22.651516'
   apm_package: vineethsoma/agent-packages/agents/fullstack-engineer
-  apm_version: 2.1.4
+  apm_version: 2.1.5
 name: fullstack-engineer
 ---
 

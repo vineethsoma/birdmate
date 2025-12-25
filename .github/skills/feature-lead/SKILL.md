@@ -3,10 +3,10 @@ description: Feature development orchestrator coordinating multiple fullstack en
   with sequential delegation Use when working with feature, lead.
 metadata:
   apm_commit: unknown
-  apm_content_hash: 72739004fe9c575e608c58b71a99c9d28bfd4b95c1ae817a9f2ff09a7a0898ea
-  apm_installed_at: '2025-12-24T21:45:54.730996'
+  apm_content_hash: ad35abce18c4c907f7dbaee22ae17ec6fcb8208225bf7b3b636c50c64c40c51e
+  apm_installed_at: '2025-12-24T22:50:21.867712'
   apm_package: vineethsoma/agent-packages/agents/feature-lead
-  apm_version: 1.2.1
+  apm_version: 1.2.2
 name: feature-lead
 ---
 

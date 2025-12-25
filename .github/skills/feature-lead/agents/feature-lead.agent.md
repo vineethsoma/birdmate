@@ -61,6 +61,108 @@ This agent leverages the following skills from `vineethsoma/agent-packages/skill
 - Each story is implemented one-at-a-time via subagent
 - Git worktrees prepare branches in advance, but execution is sequential
 
+### Delegation File Protocol (File-Based Communication)
+
+**CRITICAL**: `runSubagent` does NOT return data. Use delegation files for communication.
+
+**File Location**: `.delegation/` directory (gitignored)
+**File Naming**: `{story-id}-{task-slug}.delegation.md` (e.g., `us1-implement-search-api.delegation.md`)
+
+#### Step 1: Create Delegation File BEFORE runSubagent
+
+```bash
+mkdir -p .delegation
+cat > .delegation/us1-implement-search-api.delegation.md << 'EOF'
+# Delegation: US-001 Implement Search API
+
+**Delegated To**: fullstack-engineer
+**Started**: 2025-12-24T10:00:00Z
+**Worktree**: worktrees/feat-us1
+
+## Task Summary
+Implement POST /api/search endpoint with natural language query processing.
+
+## Acceptance Criteria
+- [ ] POST /api/search endpoint created
+- [ ] Query validation implemented
+- [ ] Tests written and passing (80%+ coverage)
+- [ ] OpenAPI spec updated
+
+## Context
+- Spec: specs/001-bird-search-ui/spec.md
+- Plan: specs/001-bird-search-ui/plan.md
+- Dependencies: Database seeded, embeddings ready
+
+## Handoff Requirements
+Next story (US-002) needs:
+- API endpoint: POST /api/search
+- Response type: BirdSearchResult[]
+- OpenAPI contract: contracts/api.openapi.yml
+
+---
+
+## 📝 SUBAGENT REPORT (Write Below After Completion)
+
+<!-- fullstack-engineer: Write your completion report here -->
+
+EOF
+```
+
+#### Step 2: Run Subagent
+
+```markdown
+runSubagent(fullstack-engineer, "Read .delegation/us1-implement-search-api.delegation.md for task details. When complete, append your report to the same file under '📝 SUBAGENT REPORT'.")
+```
+
+#### Step 3: Read Completion Report AFTER runSubagent Returns
+
+```bash
+# Display report
+cat .delegation/us1-implement-search-api.delegation.md
+```
+
+**Expected Report Format** (written by subagent):
+```markdown
+## 📝 SUBAGENT REPORT
+
+**Completed**: 2025-12-24T12:30:00Z
+**Duration**: 2.5 hours
+**Status**: ✅ SUCCESS
+
+### What Was Implemented
+- Created POST /api/search endpoint in src/api/search.ts
+- Implemented query validation and sanitization
+- Added integration tests (coverage: 87%)
+- Updated OpenAPI spec: contracts/api.openapi.yml
+
+### Test Results
+```
+Tests: 15 passing, 0 failing
+Coverage: 87% (above 80% threshold)
+```
+
+### Artifacts Created
+- src/api/search.ts
+- src/api/search.test.ts
+- contracts/api.openapi.yml (updated)
+
+### Handoff to Next Story
+- ✅ POST /api/search endpoint ready
+- ✅ OpenAPI contract documented
+- ✅ Types exported: src/types/search.ts
+- ✅ Integration tests passing
+
+### Blockers/Issues
+None - story complete and ready for merge.
+```
+
+#### Step 4: Validate and Archive
+
+```bash
+# After reading report and merging story
+mv .delegation/us1-implement-search-api.delegation.md .delegation/archive/
+```
+
 ### Subagent Execution Metadata Protocol
 
 **BEFORE invoking any subagent, display this metadata:**
@@ -114,22 +216,25 @@ This agent leverages the following skills from `vineethsoma/agent-packages/skill
 - [ ] [Follow-up action 2]
 ```
 
-**If subagent returns with no output:**
+**If subagent returns with no report in delegation file:**
 ```markdown
-## ⚠️ Subagent Complete: [AGENT_NAME] (NO OUTPUT)
+## ⚠️ Subagent Complete: [AGENT_NAME] (NO REPORT IN FILE)
 
 | Property | Value |
 |----------|-------|
 | **Agent** | [agent name] |
-| **Status** | COMPLETED - NO REPORT RETURNED |
+| **Status** | COMPLETED - NO REPORT WRITTEN TO DELEGATION FILE |
+| **Delegation File** | .delegation/[filename].delegation.md |
 
 ### Investigation Required
-1. Check for file changes: `git status`
-2. Run tests: `npm test`
-3. Review recent commits: `git log --oneline -5`
+1. Check delegation file: `cat .delegation/[filename].delegation.md`
+2. Check for file changes: `git status`
+3. Run tests: `npm test`
+4. Review recent commits: `git log --oneline -5`
 
 ### Recommended Action
-[Re-delegate with explicit reporting requirements OR manually verify]
+- Re-delegate with emphasis on writing report to delegation file
+- OR manually verify and document completion
 ```
 
 ## 🚫 HARD STOP RULES (CHECK BEFORE EVERY ACTION)

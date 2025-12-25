@@ -8,8 +8,10 @@ dependencies:
     - vineethsoma/agent-packages/agents/fullstack-engineer
     - vineethsoma/agent-packages/agents/feature-lead
     - vineethsoma/agent-packages/agents/package-manager
+    - vineethsoma/agent-packages/agents/playwright-specialist
     # Skills
     - vineethsoma/agent-packages/skills/spec-driven-development
+    - vineethsoma/agent-packages/skills/playwright-testing
     - vineethsoma/agent-packages/skills/claude-framework
     - vineethsoma/agent-packages/skills/tdd-workflow
     - vineethsoma/agent-packages/skills/refactoring-patterns

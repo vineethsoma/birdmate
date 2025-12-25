@@ -1,0 +1,11 @@
+name: playwright-testing
+version: 1.0.0
+description: Comprehensive Playwright automation testing with E2E standards, test generation workflows, and specialist agent
+type: skill
+author: Vineeth Soma
+dependencies:
+  apm:
+    - vineethsoma/agent-packages/skills/tdd-workflow
+    - vineethsoma/agent-packages/skills/claude-framework
+  mcp:
+    - microsoft/playwright-mcp

@@ -85,13 +85,91 @@ This agent leverages the following skills from `vineethsoma/agent-packages/skill
 
 ### Delegated Story Workflow (With Feature Lead)
 1. **Receive delegation** from Feature Lead (`/delegate.assign`)
-2. **Accept story** (`/delegate.accept`) - confirm context and prerequisites
-3. **Setup worktree** - navigate to assigned worktree branch
-4. **Write tests first** (TDD) - see **tdd-workflow** skill
-5. **Implement story** - apply all quality standards
-6. **Report progress daily** (`/delegate.progress`)
-7. **Complete story** (`/delegate.complete`) - checklist and handoff docs
-8. **Wait for review** - Feature Lead validates and merges
+2. **Read delegation file** - `.delegation/{story-id}-{task-slug}.delegation.md`
+3. **Accept story** (`/delegate.accept`) - confirm context and prerequisites
+4. **Setup worktree** - navigate to assigned worktree branch
+5. **Write tests first** (TDD) - see **tdd-workflow** skill
+6. **Implement story** - apply all quality standards
+7. **Report progress daily** (`/delegate.progress`)
+8. **Write completion report** - append to delegation file (see protocol below)
+9. **Wait for review** - Feature Lead validates and merges
+
+#### Delegation File Reporting Protocol
+
+**CRITICAL**: When Feature Lead delegates via `runSubagent`, you MUST write completion report to delegation file.
+
+**Location**: `.delegation/{story-id}-{task-slug}.delegation.md` (Feature Lead creates this)
+
+**Your Task**:
+1. Read the delegation file for task details
+2. Complete the story implementation
+3. **Append your report** under the `## 📝 SUBAGENT REPORT` section
+
+**Report Template**:
+```markdown
+## 📝 SUBAGENT REPORT
+
+**Completed**: [ISO timestamp]
+**Duration**: [elapsed time]
+**Status**: [✅ SUCCESS / ⚠️ PARTIAL / ❌ BLOCKED]
+
+### What Was Implemented
+- [Bullet list of what was built]
+- [Include file paths]
+
+### Test Results
+```
+Tests: X passing, Y failing
+Coverage: XX%
+```
+
+### Artifacts Created/Modified
+- [File 1 with path]
+- [File 2 with path]
+
+### Handoff to Next Story
+- [✅/❌] [Requirement 1 from delegation]
+- [✅/❌] [Requirement 2 from delegation]
+
+### Blockers/Issues
+[None OR describe any blockers encountered]
+```
+
+**Example**:
+```bash
+# After completing story, append report
+cat >> .delegation/us1-implement-search-api.delegation.md << 'EOF'
+
+## 📝 SUBAGENT REPORT
+
+**Completed**: 2025-12-24T12:30:00Z
+**Duration**: 2.5 hours
+**Status**: ✅ SUCCESS
+
+### What Was Implemented
+- Created POST /api/search endpoint in src/api/search.ts
+- Implemented query validation
+- Added integration tests (87% coverage)
+
+### Test Results
+```
+Tests: 15 passing, 0 failing
+Coverage: 87%
+```
+
+### Artifacts Created
+- src/api/search.ts
+- src/api/search.test.ts
+- contracts/api.openapi.yml (updated)
+
+### Handoff to Next Story
+- ✅ POST /api/search endpoint ready
+- ✅ OpenAPI contract documented
+
+### Blockers/Issues
+None - ready for merge.
+EOF
+```
 
 ## Quality Checklist
 
