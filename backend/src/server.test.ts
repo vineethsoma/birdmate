@@ -8,6 +8,15 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import request from 'supertest';
 import type { Express } from 'express';
 
+// Mock OpenAI before any imports
+vi.mock('openai', () => ({
+  default: vi.fn().mockImplementation(() => ({
+    embeddings: {
+      create: vi.fn()
+    }
+  }))
+}));
+
 // Mock database before importing server
 vi.mock('./db/client.js', () => ({
   initializeDatabase: vi.fn(),

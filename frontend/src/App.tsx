@@ -4,6 +4,7 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HomePage } from './pages/HomePage';
 
 // Create QueryClient for TanStack Query
 const queryClient = new QueryClient({
@@ -15,19 +16,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-// Placeholder components (to be implemented in user stories)
-function HomePage() {
-  return (
-    <div style={{ padding: '2rem', fontFamily: 'system-ui' }}>
-      <h1>🐦 Birdmate</h1>
-      <p>Natural Language Bird Search</p>
-      <p style={{ color: '#666' }}>
-        Foundation phase complete. Search interface coming soon.
-      </p>
-    </div>
-  );
-}
 
 function BirdDetailPage() {
   return (

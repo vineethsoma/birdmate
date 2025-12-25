@@ -12,6 +12,8 @@ import { sanitizeRequestBody } from './api/middleware/sanitize.js';
 import { errorHandler, notFoundHandler } from './api/middleware/errorHandler.js';
 import { rateLimiter } from './api/middleware/rateLimit.js';
 import { info, warn } from './utils/logging.js';
+import searchRouter from './api/routes/search.js';
+import taxonomyRouter from './api/routes/taxonomy.js';
 
 // Load environment variables
 dotenv.config();
@@ -54,9 +56,9 @@ export function createApp(): Express {
   });
   
   // API routes (to be implemented in user stories)
-  // app.use('/api/v1/search', searchRouter);
+  app.use('/api/v1', searchRouter);
+  app.use('/api/v1', taxonomyRouter);
   // app.use('/api/v1/birds', birdsRouter);
-  // app.use('/api/v1/taxonomy', taxonomyRouter);
   
   // Placeholder for API routes
   app.get('/api/v1', (_req, res) => {
