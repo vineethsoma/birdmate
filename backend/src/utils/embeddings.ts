@@ -51,6 +51,10 @@ export async function generateEmbedding(text: string): Promise<EmbeddingResult> 
       encoding_format: 'float',
     });
     
+    if (!response.data[0]?.embedding) {
+      throw new Error('No embedding returned from OpenAI');
+    }
+    
     return {
       embedding: response.data[0].embedding,
       model: response.model,

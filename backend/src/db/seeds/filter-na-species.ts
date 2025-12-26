@@ -29,7 +29,7 @@ export async function filterNASpecies(): Promise<void> {
     const beforeCount = db.prepare('SELECT COUNT(*) as count FROM birds').get() as { count: number };
     console.log(`📊 Initial count: ${beforeCount.count} species\n`);
     
-    await transaction(db, () => {
+    await transaction(() => {
       // 1. Delete by geographic indicators in common name
       console.log('1️⃣  Removing species by geographic indicators...');
       
@@ -105,7 +105,7 @@ export async function filterNASpecies(): Promise<void> {
       ];
       
       for (const family of excludedFamilies) {
-        const deleted = deleteAndCount(db, `DELETE FROM birds WHERE family = ?`, [family]);
+        const deleted = deleteAndCount(db, `DELETE FROM birds WHERE family = '${family.replace(/'/g, "''")}'`);
         if (deleted > 0) {
           totalDeleted += deleted;
           console.log(`   ✓ Removed ${deleted} ${family}`);
