@@ -12,15 +12,15 @@ if [ -z "$STORY_ID" ]; then
     exit 1
 fi
 
-# Load configuration
-if [ -f ".apm-workflow.yml" ]; then
-    FEATURE=$(grep 'current_feature:' .apm-workflow.yml | awk '{print $2}')
-else
-    echo "❌ .apm-workflow.yml not found"
+# Auto-detect feature directory from speckit structure
+FEATURE_DIR=$(find specs -maxdepth 1 -type d -name "[0-9]*-*" | head -1)
+
+if [ -z "$FEATURE_DIR" ]; then
+    echo "❌ No feature directory found in specs/"
     exit 1
 fi
 
-CHECKLIST="specs/${FEATURE}/stories/${STORY_ID}/checklists/claude-audit.md"
+CHECKLIST="${FEATURE_DIR}/stories/${STORY_ID}/checklists/claude-audit.md"
 
 if [ ! -f "$CHECKLIST" ]; then
     echo "❌ CLAUDE audit checklist not found: ${CHECKLIST}"

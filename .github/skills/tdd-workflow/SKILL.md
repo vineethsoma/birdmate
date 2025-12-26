@@ -1,137 +1,120 @@
 ---
-description: Test-Driven Development workflow with file safety protocols and development
-  best practices
+description: Test-Driven Development workflow with TDD commit convention, compliance
+  tracking, and validation
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-25T16:13:04.974228'
+  apm_installed_at: '2025-12-25T17:17:08.403577'
   apm_package: vineethsoma/agent-packages/skills/tdd-workflow
-  apm_version: 1.1.0
+  apm_version: 1.2.0
 name: tdd-workflow
+type: skill
+version: 1.1.0
 ---
 
 # TDD Workflow
 
-Complete Test-Driven Development workflow with safety protocols for production-ready code.
+Apply Test-Driven Development discipline with Red → Green → Refactor cycle, TDD commit convention, and compliance tracking.
 
----
+## What This Skill Provides
 
-## Core Mandate
+- **TDD compliance checklist**: Track TDD discipline throughout story
+- **TDD commit convention**: 🔴🟢♻️ emoji pattern for Red → Green → Refactor
+- **Metrics gathering**: Collect coverage, test counts, commit patterns
+- **Validation**: Verify TDD compliance before merge
+- **AI-guided verification**: Review TDD discipline and test quality
 
-- **NEVER write code without tests** (TDD approach: Red → Green → Refactor)
-- **NEVER leave commented-out code** in production
-- **ALWAYS handle errors gracefully** with recovery strategies
-- **MUST create backups** before modifying existing files
-- **MUST write self-documenting code** with clear intent
+## When to Use
 
----
+- Starting story implementation (initialize checklist)
+- Throughout development (track TDD discipline)
+- Before merge (validate compliance)
+- In code review (verify test-first approach)
 
-## Development Workflow
+## Quick Start
 
-1. **Ask clarifying questions** about requirements
-2. **Create step-by-step** implementation plan
-3. **Write failing tests first** (TDD)
-4. **Implement minimal code** to pass tests
-5. **Refactor** for code quality
-6. **Verify all tests pass**
-7. **Security validation**: Check for vulnerabilities
-8. **Final assessment**: Verify production-ready quality
-9. **Document** any breaking changes with verification steps
+### 1. Initialize TDD Checklist
 
----
+\`\`\`bash
+# From project root
+./scripts/init-tdd-checklist.sh us-001
+\`\`\`
 
-## File Safety Protocol
+Creates:
+\`\`\`
+specs/{feature}/stories/us-001/checklists/
+└── tdd-compliance.md  ← Track TDD discipline
+\`\`\`
 
-Before modifying ANY existing file:
+### 2. Follow TDD Commit Convention
 
-1. **Create timestamped backup**
-2. **Verify backup integrity**
-3. **Apply modifications atomically**
-4. **Verify write success**
-5. **Provide rollback capability** on failure
+**Red → Green → Refactor Cycle**:
 
----
+\`\`\`bash
+# 🔴 RED: Write failing test
+git add backend/tests/users.test.ts
+git commit -m "🔴 Test: POST /api/users validates email format"
 
-## The TDD Cycle
+# �� GREEN: Implement to pass
+git add backend/src/api/users.ts
+git commit -m "🟢 Implement email validation in createUser"
 
-### Red Phase
-- Write a test that describes expected behavior
-- Run the test - it MUST fail
-- Failure proves the test is valid
+# ♻️ REFACTOR: Improve code quality
+git add backend/src/api/users.ts backend/src/utils/validation.ts
+git commit -m "♻️ Extract email validation to reusable utility"
+\`\`\`
 
-### Green Phase
-- Write minimal code to pass the test
-- Don't optimize or refactor yet
-- Code can be ugly - just make it work
+**Emoji Guide**:
+- 🔴 \`:red_circle:\` - Failing test (Red phase)
+- 🟢 \`:green_circle:\` - Passing implementation (Green phase)
+- ♻️ \`:recycle:\` - Refactoring (Refactor phase)
 
-### Refactor Phase
-- Improve code quality while keeping tests green
-- Apply one refactoring at a time
-- Run tests after each change
-- Commit after each successful refactoring
+### 3. Gather TDD Metrics
 
----
+\`\`\`bash
+./scripts/gather-tdd-metrics.sh us-001
+\`\`\`
 
-## Test Writing Guidelines
+Collects:
+- TDD commit counts (🔴🟢♻️)
+- Test coverage (backend, frontend)
+- Test-to-code ratio
+- Test file counts
 
-### Naming Tests
-Use descriptive names that explain what is tested:
-```
-test_calculate_discount_returns_zero_for_new_customers
-test_validate_email_rejects_missing_at_symbol
-test_process_order_throws_when_inventory_insufficient
-```
+### 4. Validate Before Merge
 
-### Arrange-Act-Assert Pattern
-```
-# Arrange - Set up test data and conditions
-user = create_test_user(discount_tier="gold")
-cart = create_cart_with_items([item1, item2])
+\`\`\`bash
+./scripts/validate-tdd-compliance.sh us-001
+\`\`\`
 
-# Act - Execute the code being tested
-discount = calculate_discount(user, cart)
+Checks:
+- [ ] All checklist items completed
+- [ ] Coverage ≥ 80%
+- [ ] TDD commit pattern detected (🔴→🟢)
+- [ ] No skipped or commented tests
 
-# Assert - Verify the expected outcome
-assert discount == expected_discount
-```
+Exit code 0 = passed, 1 = failed.
 
-### Test Coverage Requirements
-- **Minimum 80%** code coverage for new code
-- **100%** coverage for critical paths (auth, payments, data mutations)
-- Test all three scenarios:
-  - ✅ Happy path (normal operation)
-  - ❌ Error scenarios (expected failures)
-  - 🔄 Edge cases (boundary conditions)
+## TDD Commit Convention Details
 
----
+See [TDD discipline instructions](../.apm/instructions/tdd-discipline.instructions.md) for full details on commit convention enforcement.
 
-## When NOT to Write Tests First
+## Integration with Other Skills
 
-There are limited exceptions:
-- **Exploratory spikes** - throwaway code to learn
-- **Prototype UI** - visual experiments (delete before production)
+- **Task-delegation**: TDD compliance tracked per delegation
+- **Feature-orchestration**: TDD checklist in story checklists/ directory
+- **Retrospective-workflow**: TDD metrics included in retro
+- **CLAUDE-framework**: TDD is part of coding standards
 
-Even in these cases, write tests before shipping to production.
+## Scripts
 
----
+- \`init-tdd-checklist.sh <story-id>\` - Initialize TDD compliance checklist
+- \`gather-tdd-metrics.sh <story-id>\` - Collect TDD metrics
+- \`validate-tdd-compliance.sh <story-id>\` - Verify compliance (exit 0/1)
 
-## Decision-Making Framework
+## Prompts
 
-When facing architectural choices:
+- \`verify-tdd-compliance\` - AI-guided TDD verification workflow
 
-1. **Understand the Trade-offs**: Explain pros and cons of different approaches
-2. **Consider Scalability**: Will this approach scale with growth?
-3. **Plan for Maintainability**: Can future developers understand and maintain this?
-4. **Prioritize Production-Ready**: Deliver solutions that are battle-tested and reliable
-5. **Follow Best Practices**: Apply industry-standard patterns and conventions
+## Templates
 
----
-
-## Success Indicators
-
-You've successfully contributed when:
-
-- ✅ Features work end-to-end without issues
-- ✅ Code is maintainable and well-documented
-- ✅ Performance meets or exceeds requirements
-- ✅ Security standards are enforced
-- ✅ All tests pass with adequate coverage
+- \`tdd-compliance.checklist.md\` - TDD discipline tracking

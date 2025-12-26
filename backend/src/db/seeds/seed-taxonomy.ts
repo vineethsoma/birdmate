@@ -10,6 +10,7 @@ import { resolve } from 'path';
 import { getDatabase, transaction } from '../client.js';
 
 const TAXONOMY_CSV_PATH = resolve(process.cwd(), '../database/ebird-taxonomy.csv');
+const NA_SPECIES_PATH = resolve(process.cwd(), '../database/na-species-codes.json');
 
 interface TaxonomyRow {
   speciesCode: string;
@@ -45,12 +46,97 @@ function parseCSVLine(line: string): string[] {
 }
 
 /**
- * Filter for North American species
+ * Load North American species codes from downloaded list
  */
-function isNorthAmerican(row: TaxonomyRow): boolean {
-  // TODO: Add proper geographic filtering based on eBird range data
-  // For MVP, we'll include all "species" category birds
-  return row.category === 'species';
+function loadNASpeciesCodes(): Set<string> {
+  try {
+    const content = readFileSync(NA_SPECIES_PATH, 'utf-8');
+    const codes: string[] = JSON.parse(content);
+    return new Set(codes);
+  } catch (error) {
+    console.warn('  ⚠️  Could not load NA species list, using heuristics');
+    return new Set();
+  }
+}
+
+/**
+ * Filter for North American species
+ * 
+ * Strategy: Use eBird regional species list (US, CA, MX) for accurate filtering
+ * Fallback to heuristics if regional list unavailable
+ */
+function isNorthAmerican(row: TaxonomyRow, naSpeciesCodes: Set<string>): boolean {
+  // Only include actual species (not hybrids, subspecies, etc.)
+  if (row.category !== 'species') {
+    return false;
+  }
+  
+  // If we have the authoritative NA species list, use it
+  if (naSpeciesCodes.size > 0) {
+    return naSpeciesCodes.has(row.speciesCode);
+  }
+  
+  // Fallback: Heuristic filtering (less accurate)
+  const excludedFamilies = [
+    'Ostriches',
+    'Cassowaries and Emu',
+    'Kiwis',
+    'Rheas',
+    'Tinamous',
+    'Megapodes',
+    'Guineafowl',
+    'Turacos',
+    'Mousebirds',
+    'Mesites',
+    'Honeyguides',
+    'Pittas',
+    'Broadbills',
+    'Asities',
+    'Lyrebirds',
+    'Fairywrens',
+    'Australasian Treecreepers',
+    'Berrypeckers',
+    'Australasian Babblers',
+    'Logrunners',
+    'Australasian Robins',
+    'Rockfowl',
+    'Rockjumpers',
+    'Sugarbirds',
+    'Bushshrikes and allies',
+    'Drongos',
+    'Fantails',
+    'Monarch Flycatchers',
+    'Honeyeaters',
+  ];
+  
+  if (excludedFamilies.includes(row.familyComName)) {
+    return false;
+  }
+  
+  // Exclude species with geographic indicators in common name
+  const excludePatterns = [
+    /\bAfrican\b/i,
+    /\bAsian\b/i,
+    /\bEurasian\b(?!.*(Wigeon|Teal|Coot|Woodcock|Collared-Dove))/i, // Allow Eurasian species found in NA
+    /\bEuropean\b/i,
+    /\bAustralian\b/i,
+    /\bNew Zealand\b/i,
+    /\bMadagascar\b/i,
+    /\bIndian\b/i,
+    /\bOriental\b/i,
+    /\bSomali\b/i,
+    /\bEgyptian\b/i,
+    /\bSouthern (?!Fulmar|Lapwing)\b/i, // Exclude Southern unless it's Southern Fulmar/Lapwing
+    /\bPatagonian\b/i,
+  ];
+  
+  for (const pattern of excludePatterns) {
+    if (pattern.test(row.comName)) {
+      return false;
+    }
+  }
+  
+  return true;
 }
 
 /**
@@ -60,6 +146,10 @@ export async function seedTaxonomy(): Promise<number> {
   console.log('🌱 Seeding bird taxonomy...');
   
   try {
+    // Load North American species codes
+    const naSpeciesCodes = loadNASpeciesCodes();
+    console.log(`  Loaded ${naSpeciesCodes.size} North American species codes`);
+    
     const csvContent = readFileSync(TAXONOMY_CSV_PATH, 'utf-8');
     const lines = csvContent.split('\n').filter(line => line.trim().length > 0);
     
@@ -95,15 +185,12 @@ export async function seedTaxonomy(): Promise<number> {
         category: row[categoryIdx] || '',
       };
       
-      if (bird.speciesCode && bird.comName && isNorthAmerican(bird)) {
+      if (bird.speciesCode && bird.comName && isNorthAmerican(bird, naSpeciesCodes)) {
         birds.push(bird);
       }
     }
     
-    // Limit to ~500-1000 species for MVP
-    const limitedBirds = birds.slice(0, 1000);
-    
-    console.log(`📊 Filtered ${limitedBirds.length} North American species from ${lines.length - 1} total`);
+    console.log(`📊 Filtered ${birds.length} North American species from ${lines.length - 1} total species`);
     
     // Insert into database
     const inserted = transaction((db) => {
@@ -117,7 +204,7 @@ export async function seedTaxonomy(): Promise<number> {
       `);
       
       let count = 0;
-      for (const bird of limitedBirds) {
+      for (const bird of birds) {
         // Generate basic description for semantic search
         const description = `${bird.comName} (${bird.sciName}). Family: ${bird.familyComName}.`;
         

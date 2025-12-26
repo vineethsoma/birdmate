@@ -1,7 +1,7 @@
 ---
 name: playwright-specialist
 description: E2E testing expert using Playwright for browser automation and test generation
-tools: ['execute', 'read', 'edit', 'search', 'microsoft-playwright-mcp/*']
+tools: ['execute', 'read', 'edit', 'search', 'playwright/*']
 model: Claude Sonnet 4.5
 handoffs:
   - label: E2E Tests Complete

@@ -11,9 +11,10 @@ if [ -z "$STORY_ID" ]; then
     exit 1
 fi
 
-# Load configuration
-FEATURE=$(grep 'current_feature:' .apm-workflow.yml 2>/dev/null | awk '{print $2}' || echo "unknown")
-STORY_ROOT="specs/${FEATURE}/stories/${STORY_ID}"
+# Auto-detect feature directory from speckit structure
+FEATURE_DIR=$(find specs -maxdepth 1 -type d -name "[0-9]*-*" | head -1)
+FEATURE=$(basename "${FEATURE_DIR}" | cut -d'-' -f2- || echo "unknown")
+STORY_ROOT="${FEATURE_DIR}/stories/${STORY_ID}"
 
 echo "📊 Gathering metrics for ${STORY_ID}..."
 echo ""

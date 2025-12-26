@@ -11,10 +11,11 @@ if [ -z "$STORY_ID" ]; then
     exit 1
 fi
 
-# Load configuration
-FEATURE=$(grep 'current_feature:' .apm-workflow.yml 2>/dev/null | awk '{print $2}' || echo "unknown")
-RETRO_FILE="specs/${FEATURE}/stories/${STORY_ID}/retro/retro.md"
-HANDOFF_FILE="specs/${FEATURE}/stories/${STORY_ID}/retro/handoff.yml"
+# Auto-detect feature directory from speckit structure
+FEATURE_DIR=$(find specs -maxdepth 1 -type d -name "[0-9]*-*" | head -1)
+FEATURE=$(basename "${FEATURE_DIR}" | cut -d'-' -f2- || echo "unknown")
+RETRO_FILE="${FEATURE_DIR}/stories/${STORY_ID}/retro/retro.md"
+HANDOFF_FILE="${FEATURE_DIR}/stories/${STORY_ID}/retro/handoff.yml"
 
 if [ ! -f "$RETRO_FILE" ]; then
     echo "❌ Retro file not found: ${RETRO_FILE}"

@@ -4,9 +4,9 @@ description: Comprehensive Playwright automation testing skill with E2E testing 
   automated browser tests, testing user flows, or performing web application QA.
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-24T23:00:23.841361'
+  apm_installed_at: '2025-12-25T17:17:03.517095'
   apm_package: vineethsoma/agent-packages/skills/playwright-testing
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: playwright-testing
 type: skill
 version: 1.0.0

@@ -13,7 +13,8 @@
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "db:migrate": "tsx src/db/migrations/run.ts",
-    "db:seed": "tsx src/db/seeds/run-all.ts"
+    "db:seed": "tsx src/db/seeds/run-all.ts",
+    "db:seed:embeddings": "tsx src/db/seeds/generate-embeddings.ts"
   },
   "dependencies": {
     "better-sqlite3": "^11.0.0",

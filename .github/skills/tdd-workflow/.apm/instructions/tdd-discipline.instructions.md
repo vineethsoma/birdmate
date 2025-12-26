@@ -1,11 +1,79 @@
 ---
 applyTo: "**"
-description: Test-Driven Development workflow and safety protocols
+description: Test-Driven Development workflow with TDD commit convention
 ---
 
 # TDD Workflow Standards
 
 Apply Test-Driven Development discipline to all code changes.
+
+## TDD Commit Convention
+
+**MANDATORY**: Use emoji pattern to mark TDD cycle phases in commit messages.
+
+### Commit Message Format
+
+- **🔴 Red Phase** - Failing test written
+  - Emoji: 🔴 (`:red_circle:`)
+  - Example: `git commit -m "🔴 Test: POST /api/users validates email format"`
+  
+- **🟢 Green Phase** - Implementation makes test pass
+  - Emoji: 🟢 (`:green_circle:`)
+  - Example: `git commit -m "🟢 Implement email validation in createUser"`
+  
+- **♻️ Refactor Phase** - Improve code quality without changing behavior
+  - Emoji: ♻️ (`:recycle:`)
+  - Example: `git commit -m "♻️ Extract email validation to utility function"`
+
+### Why Use This Convention?
+
+1. **Visibility**: Commit history shows TDD discipline at a glance
+2. **Accountability**: Easy to verify test-first approach in code review
+3. **Metrics**: Scripts can automatically count TDD compliance
+4. **Culture**: Reinforces TDD mindset across team
+
+### Example TDD Cycle
+
+```bash
+# Red: Write failing test
+git add backend/tests/users.test.ts
+git commit -m "🔴 Test: user cannot register with invalid email"
+
+# Green: Make test pass
+git add backend/src/api/users.ts
+git commit -m "🟢 Add email format validation to createUser"
+
+# Refactor: Improve implementation
+git add backend/src/api/users.ts backend/src/utils/validation.ts
+git commit -m "♻️ Extract validation logic to shared utility"
+```
+
+### Enforcement
+
+Scripts validate TDD discipline by counting emoji commits:
+```bash
+RED_COMMITS=$(git log --grep="🔴" origin/main..feat-branch | wc -l)
+GREEN_COMMITS=$(git log --grep="🟢" origin/main..feat-branch | wc -l)
+
+# Valid TDD: RED > 0 AND GREEN > 0
+```
+
+### Anti-Pattern Detection
+
+**🚫 Test-Last Development** (detectable):
+```bash
+git log --oneline
+# abc123 ✅ Implement user registration  ← No 🔴 first!
+# def456 ✅ Add tests for registration   ← Test after impl
+```
+
+**✅ Proper TDD** (verifiable):
+```bash
+git log --oneline
+# abc123 🔴 Test: user registration validates email
+# def456 🟢 Implement email validation
+# ghi789 ♻️ Refactor validation to utility
+```
 
 ## Core TDD Cycle: Red → Green → Refactor
 

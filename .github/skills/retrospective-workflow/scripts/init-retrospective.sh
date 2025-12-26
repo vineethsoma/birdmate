@@ -12,16 +12,16 @@ if [ -z "$STORY_ID" ]; then
     exit 1
 fi
 
-# Load configuration
-if [ -f ".apm-workflow.yml" ]; then
-    FEATURE=$(grep 'current_feature:' .apm-workflow.yml | awk '{print $2}')
-else
-    echo "❌ .apm-workflow.yml not found. Please create it first."
+# Auto-detect feature directory from speckit structure
+FEATURE_DIR=$(find specs -maxdepth 1 -type d -name "[0-9]*-*" | head -1)
+
+if [ -z "$FEATURE_DIR" ]; then
+    echo "❌ No feature directory found in specs/"
     exit 1
 fi
 
 # Define paths
-STORY_ROOT="specs/${FEATURE}/stories/${STORY_ID}"
+STORY_ROOT="${FEATURE_DIR}/stories/${STORY_ID}"
 RETRO_DIR="${STORY_ROOT}/retro"
 
 # Check if story directory exists

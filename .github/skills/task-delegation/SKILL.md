@@ -1,21 +1,85 @@
 ---
-description: Delegate user stories to specialized agents with clear context, acceptance
-  criteria, and handoff protocols for parallel execution
+description: Delegate user stories with complete context, clear acceptance criteria,
+  and validation
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-24T18:20:19.743416'
+  apm_installed_at: '2025-12-25T17:17:07.496816'
   apm_package: vineethsoma/agent-packages/skills/task-delegation
-  apm_version: 1.1.0
+  apm_version: 1.2.0
 name: task-delegation
+type: skill
+version: 1.1.0
 ---
 
 # Task Delegation
 
-Coordinate work across multiple agents by delegating user stories with complete context, clear acceptance criteria, and structured handoff protocols. Enable parallel execution while maintaining feature coherence.
+Delegate user stories to specialized agents with complete context, clear ownership, and standardized workflow.
+
+## What This Skill Provides
+
+- **Delegation brief template**: Comprehensive task handoff format
+- **Initialization script**: Auto-create delegation documents with story context
+- **Validation**: Verify delegation completeness before handoff
+- **AI-guided workflow**: Create complete delegation briefs with acceptance criteria
+
+## When to Use
+
+- Delegating story implementation to agents
+- Creating delegation briefs for parallel workstreams
+- Ensuring agents have complete context before starting
+- Validating delegation readiness
+
+## Quick Start
+
+### 1. Initialize Delegation
+
+```bash
+# From project root
+./scripts/init-delegation.sh us-001 fullstack-engineer
+```
+
+Creates:
+```
+specs/{feature}/stories/us-001/delegation/
+└── fullstack-engineer.delegation.md  ← Fill this
+```
+
+Auto-extracts context from story tracker.
+
+### 2. Fill Delegation Brief
+
+Use AI-guided prompt:
+```
+/create-delegation-brief
+```
+
+Guides you through:
+- Context and user value
+- Acceptance criteria (agent-specific)
+- Dependencies (what must be ready first)
+- Technical details (files, architecture)
+- Handoff requirements (what next story needs)
+- Standards reference
+
+### 3. Validate Completeness
+
+```bash
+./scripts/validate-delegation-brief.sh us-001 fullstack-engineer
+```
+
+Checks:
+- [ ] All required sections present
+- [ ] No [Fill] placeholders
+- [ ] Acceptance criteria defined with checkboxes
+- [ ] Branch/worktree assigned
+
+Exit code 0 = passed, 1 = failed.
 
 ---
 
-## Core Principles
+## Legacy Delegation Workflow (Reference)
+
+### Core Principles
 
 ### 1. Complete Context Transfer
 

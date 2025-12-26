@@ -1,15 +1,12 @@
 {
-  "mcpServers": {
-    "playwright": {
-      "command": "docker",
+  "servers": {
+    "microsoft/playwright-mcp": {
+      "type": "stdio",
+      "command": "npx",
       "args": [
-        "exec",
-        "-i",
-        "playwright-mcp-server",
-        "node",
-        "cli.js",
-        "--headless"
+        "@playwright/mcp"
       ]
     }
-  }
+  },
+  "inputs": []
 }

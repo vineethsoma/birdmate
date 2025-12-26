@@ -5,6 +5,7 @@
  * using OpenAI's text-embedding-3-small model
  */
 
+import 'dotenv/config';
 import OpenAI from 'openai';
 import { getDatabase, transaction } from '../client.js';
 
@@ -128,6 +129,15 @@ export async function generateEmbeddings(): Promise<number> {
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   generateEmbeddings()
-    .then(() => process.exit(0))
-    .catch(() => process.exit(1));
+    .then((count) => {
+      console.log(`✨ Complete! Generated ${count} embeddings`);
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('💥 Fatal error:', error.message);
+      if (error.stack) {
+        console.error(error.stack);
+      }
+      process.exit(1);
+    });
 }

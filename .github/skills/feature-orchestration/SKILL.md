@@ -3,9 +3,9 @@ description: Story orchestration with progress tracking, standardized directory 
   and validation
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-25T16:52:52.678330'
+  apm_installed_at: '2025-12-25T17:17:00.831561'
   apm_package: vineethsoma/agent-packages/skills/feature-orchestration
-  apm_version: 1.1.0
+  apm_version: 1.2.0
 name: feature-orchestration
 type: skill
 version: 1.1.0

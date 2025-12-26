@@ -1,5 +1,5 @@
 name: retrospective-workflow
-version: 1.0.0
+version: 1.1.0
 description: Post-story retrospective workflow with templates, scripts, and automated handoff generation
 type: skill
 author: Vineeth Soma

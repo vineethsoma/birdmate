@@ -3,9 +3,9 @@ description: Systematic post-story retrospective process with automated metrics 
   structured feedback collection, and Agent Package Manager handoff generation
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-25T16:52:57.714220'
+  apm_installed_at: '2025-12-25T17:17:05.338063'
   apm_package: vineethsoma/agent-packages/skills/retrospective-workflow
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: retrospective-workflow
 ---
 
