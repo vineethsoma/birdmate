@@ -3,10 +3,10 @@ description: Facilitates post-story retrospectives and creates structured handof
   specs for continuous improvement Use when working with retro, specialist.
 metadata:
   apm_commit: unknown
-  apm_content_hash: f3b822b6db9833c285b4d2668b57d11c35015c6ee51dbf3e5b14f4fbdc506c3b
-  apm_installed_at: '2025-12-25T16:12:57.049412'
+  apm_content_hash: fde49dfe2bb31fffadfb47c128f3b7f4c0ac7c370812ee9b8dbe045bc7b42e9e
+  apm_installed_at: '2025-12-25T22:26:20.145210'
   apm_package: vineethsoma/agent-packages/agents/retro-specialist
-  apm_version: 1.0.0
+  apm_version: 1.1.0
 name: retro-specialist
 ---
 

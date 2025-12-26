@@ -3,10 +3,10 @@ description: Agent for creating and managing APM agent packages with kebab-case 
   enforcement Use when working with agent, compliance, create, lifecycle, manager.
 metadata:
   apm_commit: unknown
-  apm_content_hash: 13c2dd9905a36a7fc02c3623f957fdb9aa34636e1c4ca4f1106d9cff86e75907
-  apm_installed_at: '2025-12-25T16:06:59.052273'
+  apm_content_hash: fafc66c7265bcbd2374ec9db261a267e6cf1989ff90a9e6fb1680170b1677655
+  apm_installed_at: '2025-12-25T22:26:18.343902'
   apm_package: vineethsoma/agent-packages/agents/package-manager
-  apm_version: 1.1.1
+  apm_version: 1.2.0
 name: agent-package-manager
 ---
 

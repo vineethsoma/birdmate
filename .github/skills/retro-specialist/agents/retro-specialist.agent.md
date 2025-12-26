@@ -3,6 +3,7 @@ name: retro-specialist
 description: Expert in facilitating post-story retrospectives, gathering structured feedback, and creating improvement handoff specs
 tools:
   ['read', 'edit/editFiles', 'search']
+model: Claude Sonnet 4.5
 handoffs:
   - label: Implement Improvements
     agent: agent-package-manager

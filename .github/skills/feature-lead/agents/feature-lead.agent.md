@@ -2,7 +2,7 @@
 name: feature-lead
 description: Feature development orchestrator coordinating multi-story features with spec validation, team coordination, and sequential delegation
 tools: ['execute', 'read', 'edit', 'search', 'agent']
-model: Claude Opus 4.5 (copilot)
+model: Claude Opus 4.5
 handoffs:
   - label: Delegate to Fullstack Engineer
     agent: fullstack-engineer
@@ -15,6 +15,10 @@ handoffs:
   - label: Delegate E2E Test Automation
     agent: playwright-specialist
     prompt: Create comprehensive E2E tests for this feature according to the specification and acceptance criteria. Test all user flows and edge cases.
+    send: true
+  - label: Run Story Retrospective
+    agent: retro-specialist
+    prompt: Run retrospective for this completed story to capture learnings and identify process improvements
     send: true
 ---
 
