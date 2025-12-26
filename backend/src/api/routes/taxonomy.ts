@@ -49,7 +49,7 @@ router.get('/taxonomy', (_req: Request, res: Response) => {
       lastUpdated: metadata.updated_at,
       source: metadata.source,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Taxonomy endpoint error:', error);
     res.status(500).json({
       error: {

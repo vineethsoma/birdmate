@@ -62,7 +62,7 @@ export class SearchService {
     }));
     
     // Generate embedding
-    const { embedding, model, tokens } = await generateEmbedding(cleanedQuery);
+    const { embedding } = await generateEmbedding(cleanedQuery);
     
     // Perform similarity search with minimum score threshold
     const searchResults = this.birdService.searchBySimilarity(

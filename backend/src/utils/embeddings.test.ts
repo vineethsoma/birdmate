@@ -20,7 +20,7 @@ vi.mock('openai', () => {
   };
 });
 
-import { generateEmbedding, type EmbeddingResult } from './embeddings.js';
+import { generateEmbedding } from './embeddings.js';
 
 describe('Embeddings Utility', () => {
   beforeEach(() => {

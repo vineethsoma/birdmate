@@ -162,7 +162,20 @@ export class BirdService {
       LIMIT 1
     `);
     
-    const row = stmt.get(id) as any;
+    interface BirdRow {
+      id: string;
+      common_name: string;
+      scientific_name: string;
+      family: string;
+      description: string;
+      size_min_cm: number;
+      size_max_cm: number;
+      habitat: string;
+      range: string;
+      thumbnail_url: string | null;
+    }
+    
+    const row = stmt.get(id) as BirdRow | undefined;
     
     if (!row) {
       return null;
@@ -210,7 +223,20 @@ export class BirdService {
       WHERE b.id IN (${placeholders})
     `);
     
-    const rows = stmt.all(...ids) as any[];
+    interface BirdRow {
+      id: string;
+      common_name: string;
+      scientific_name: string;
+      family: string;
+      description: string;
+      size_min_cm: number;
+      size_max_cm: number;
+      habitat: string;
+      range: string;
+      thumbnail_url: string | null;
+    }
+    
+    const rows = stmt.all(...ids) as BirdRow[];
     
     // Create lookup map
     const birdMap = new Map<string, BirdWithImage>();

@@ -51,22 +51,23 @@ router.post('/search', async (req: Request, res: Response) => {
     const result = await searchService.search(query);
     
     res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle validation errors
-    if (error.message?.includes('must be 3-500 characters')) {
+    const err = error as Error;
+    if (err.message?.includes('must be 3-500 characters')) {
       return res.status(400).json({
         error: {
           code: 'VALIDATION_ERROR',
-          message: error.message,
+          message: err.message,
         },
       });
     }
     
     // Handle other errors (E-2)
     console.error('Search error:', {
-      error: error.message,
-      stack: error.stack,
-      queryLength: query?.length || 0,
+      error: err.message,
+      stack: err.stack,
+      queryLength: req.body.query?.length || 0,
     });
     res.status(500).json({
       error: {
