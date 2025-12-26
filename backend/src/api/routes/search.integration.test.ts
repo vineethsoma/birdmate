@@ -19,11 +19,18 @@ import { SearchService } from '../../services/SearchService.js';
 import { BirdService } from '../../services/BirdService.js';
 import { getDatabase } from '../../db/client.js';
 
-describe('Search Relevance Integration Tests', () => {
+// Skip all integration tests if OPENAI_API_KEY is not available
+const skipIntegrationTests = !process.env.OPENAI_API_KEY;
+
+describe.skipIf(skipIntegrationTests)('Search Relevance Integration Tests', () => {
   let searchService: SearchService;
   let birdService: BirdService;
 
   beforeAll(() => {
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn('⚠️  OPENAI_API_KEY not set - skipping integration tests');
+      return;
+    }
     const db = getDatabase();
     birdService = new BirdService(db);
     searchService = new SearchService(birdService);

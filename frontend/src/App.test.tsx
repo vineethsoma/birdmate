@@ -8,9 +8,6 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-// Mock useNavigate and useLocation from react-router-dom
-import * as router from 'react-router-dom';
-
 describe('App Component', () => {
   beforeEach(() => {
     // Reset any router state
