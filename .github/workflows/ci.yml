@@ -237,10 +237,46 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       
-      - name: Run E2E tests
+      - name: Start backend server
+        working-directory: ./backend
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          npm run dev &
+          echo $! > backend.pid
+      
+      - name: Wait for backend health
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3001/health 2>/dev/null; do echo "Waiting for backend..."; sleep 2; done' || {
+            echo "Backend failed to start"
+            exit 1
+          }
+      
+      - name: Start frontend server
+        working-directory: ./frontend
+        run: |
+          npm run dev &
+          echo $! > frontend.pid
+      
+      - name: Wait for frontend
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:5173 2>/dev/null; do echo "Waiting for frontend..."; sleep 2; done' || {
+            echo "Frontend failed to start"
+            exit 1
+          }
+      
+      - name: Run E2E tests
         run: npx playwright test
+      
+      - name: Stop servers
+        if: always()
+        run: |
+          if [ -f backend/backend.pid ]; then
+            kill $(cat backend/backend.pid) 2>/dev/null || true
+          fi
+          if [ -f frontend/frontend.pid ]; then
+            kill $(cat frontend/frontend.pid) 2>/dev/null || true
+          fi
       
       - name: Upload E2E test report
         uses: actions/upload-artifact@v4
