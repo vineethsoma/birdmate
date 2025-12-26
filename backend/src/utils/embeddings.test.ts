@@ -4,7 +4,7 @@
  * Tests text embedding generation for semantic search
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Create mock function that will be used by the OpenAI mock
 let mockCreate = vi.fn();
@@ -23,8 +23,17 @@ vi.mock('openai', () => {
 import { generateEmbedding } from './embeddings.js';
 
 describe('Embeddings Utility', () => {
+  const originalApiKey = process.env.OPENAI_API_KEY;
+
   beforeEach(() => {
+    // Set fake API key for tests (mocked OpenAI client won't use it)
+    process.env.OPENAI_API_KEY = 'test-key-for-mocked-client';
     mockCreate = vi.fn();
+  });
+
+  afterEach(() => {
+    // Restore original API key
+    process.env.OPENAI_API_KEY = originalApiKey;
   });
 
   describe('generateEmbedding', () => {
