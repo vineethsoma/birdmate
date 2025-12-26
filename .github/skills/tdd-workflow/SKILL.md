@@ -3,9 +3,9 @@ description: Test-Driven Development workflow with TDD commit convention, compli
   tracking, and validation
 metadata:
   apm_commit: unknown
-  apm_installed_at: '2025-12-25T17:17:08.403577'
+  apm_installed_at: '2025-12-25T23:03:47.258080'
   apm_package: vineethsoma/agent-packages/skills/tdd-workflow
-  apm_version: 1.2.0
+  apm_version: 1.3.0
 name: tdd-workflow
 type: skill
 version: 1.1.0

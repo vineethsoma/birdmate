@@ -1,0 +1,7 @@
+name: integration-testing
+version: 1.0.0
+description: Frontend-backend integration patterns, CORS configuration, API contract validation, and build hygiene for full-stack TypeScript applications
+author: Agent Package Manager (learnings from birdmate US-001)
+type: skill
+dependencies:
+  apm: []

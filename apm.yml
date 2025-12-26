@@ -21,6 +21,7 @@ dependencies:
     - vineethsoma/agent-packages/skills/git-worktree-workflow
     - vineethsoma/agent-packages/skills/task-delegation
     - vineethsoma/agent-packages/skills/retrospective-workflow
+    - vineethsoma/agent-packages/skills/integration-testing  # NEW: v1.0.0
   mcp:
     - microsoft/playwright-mcp
 scripts: {}

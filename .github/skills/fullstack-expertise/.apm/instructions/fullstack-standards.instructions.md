@@ -113,6 +113,68 @@ Apply production-ready practices across the entire application stack.
 - Multi-stage builds for smaller images
 - Docker Compose for local development
 
+## Integration Validation
+
+**Before merging any full-stack feature**:
+
+### API Contract Verification
+```bash
+# 1. Test actual API response
+curl -X POST http://localhost:3001/api/v1/endpoint \
+  -H "Content-Type: application/json" \
+  -d '{"test": "data"}' | jq '.' > specs/[story]/actual-response.json
+
+# 2. Compare with frontend types
+# Frontend types MUST match actual-response.json structure exactly
+```
+
+**Contract Testing Checklist**:
+- [ ] API endpoint tested with curl (not just mocked in tests)
+- [ ] Actual response structure saved to specs/ directory
+- [ ] Frontend types match actual response (not ideal design)
+- [ ] Type transformation happens at integration boundary only
+
+### CORS Development Checklist
+- [ ] Backend CORS config supports port range (not single port)
+  ```typescript
+  // ✅ CORRECT
+  const CORS_ORIGINS = (process.env.CORS_ORIGIN || 
+    'http://localhost:5173,http://localhost:5174,http://localhost:5175'
+  ).split(',').map(s => s.trim());
+  ```
+- [ ] `.env.example` documents CORS_ORIGIN pattern
+- [ ] README documents required environment variables
+- [ ] CORS origins logged at server startup for debugging
+- [ ] OPTIONS preflight tested from actual frontend port
+
+### Build Hygiene
+- [ ] No `.js` or `.jsx` files committed in `src/` directories
+- [ ] `.gitignore` excludes compiled outputs
+  ```gitignore
+  src/**/*.js
+  src/**/*.jsx
+  dist/
+  build/
+  ```
+- [ ] `npm run build` works on clean checkout
+- [ ] Package.json includes clean script:
+  ```json
+  {
+    "scripts": {
+      "clean": "find src/ -name '*.js' -o -name '*.jsx' | xargs rm -f",
+      "prebuild": "npm run clean"
+    }
+  }
+  ```
+
+### Integration Testing Requirements
+- [ ] E2E test with both services running
+- [ ] Console error monitoring in E2E tests
+- [ ] Network failure monitoring in E2E tests
+- [ ] Manual verification with screenshot evidence
+- [ ] Zero CORS errors in browser console
+- [ ] Zero type errors in network responses
+
 ---
 
-**Remember**: Full-stack means owning quality at every layer.
+**Remember**: Full-stack means owning quality at every layer, especially at integration boundaries.
