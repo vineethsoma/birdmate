@@ -66,12 +66,13 @@ export default defineConfig({
   ],
 
   // Start dev servers before running tests
-  webServer: [
+  // In CI, servers are pre-started by the workflow. Locally, Playwright starts them.
+  webServer: process.env.CI ? undefined : [
     {
       command: 'cd backend && npm run dev',
       url: 'http://localhost:3001',
       timeout: 120000,
-      reuseExistingServer: true,  // Always reuse if available (CI pre-starts them)
+      reuseExistingServer: true,
       stdout: 'pipe',
       stderr: 'pipe',
     },
@@ -79,7 +80,7 @@ export default defineConfig({
       command: 'cd frontend && npm run dev',
       url: 'http://localhost:5173',
       timeout: 120000,
-      reuseExistingServer: true,  // Always reuse if available (CI pre-starts them)
+      reuseExistingServer: true,
       stdout: 'pipe',
       stderr: 'pipe',
     },
