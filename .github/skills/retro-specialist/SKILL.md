@@ -1,18 +1,19 @@
 ---
-description: Facilitates post-story retrospectives and creates structured handoff
-  specs for continuous improvement Use when working with retro, specialist.
+description: Facilitates post-story retrospectives with subagent consultation capabilities
+  and creates structured handoff specs for continuous improvement Use when working
+  with retro, specialist.
 metadata:
   apm_commit: unknown
-  apm_content_hash: fde49dfe2bb31fffadfb47c128f3b7f4c0ac7c370812ee9b8dbe045bc7b42e9e
-  apm_installed_at: '2025-12-25T22:26:20.145210'
+  apm_content_hash: caa8f7be84b4bbf734c370be8a32a6b8a76053bd311d97e6d6da889fe559cd5c
+  apm_installed_at: '2025-12-25T23:12:58.725703'
   apm_package: vineethsoma/agent-packages/agents/retro-specialist
-  apm_version: 1.1.0
+  apm_version: 1.2.0
 name: retro-specialist
 ---
 
 # retro-specialist
 
-Facilitates post-story retrospectives and creates structured handoff specs for continuous improvement
+Facilitates post-story retrospectives with subagent consultation capabilities and creates structured handoff specs for continuous improvement
 
 ## What's Included
 

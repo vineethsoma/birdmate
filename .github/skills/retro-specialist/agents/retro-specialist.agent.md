@@ -2,7 +2,7 @@
 name: retro-specialist
 description: Expert in facilitating post-story retrospectives, gathering structured feedback, and creating improvement handoff specs
 tools:
-  ['read', 'edit/editFiles', 'search']
+  ['read', 'edit/editFiles', 'search', 'agent']
 model: Claude Sonnet 4.5
 handoffs:
   - label: Implement Improvements
@@ -54,34 +54,61 @@ Collect quantitative data from the completed story:
 - CLAUDE audit score
 - Lines of code added/modified
 
-### 2. Gather YAML Input
-Request structured feedback from each contributor using this format:
+### 2. Gather Feedback via Subagent Consultation
 
-```yaml
-# Input from [Agent Name]
-agent: [agent-name]
+**Use `runSubagent` tool to consult each contributor** for structured YAML feedback:
+
+```typescript
+runSubagent({
+  agentName: "tdd-specialist",
+  description: "TDD feedback for US-XXX",
+  prompt: `You were the TDD Specialist for US-XXX ([Story Title]) in the [project] project.
+  
+[Story context: what was built, what went right, what went wrong]
+
+Please provide structured YAML feedback using this format:
+
+\`\`\`yaml
+agent: tdd-specialist
 story: US-XXX
 
 successes:
   - category: [Testing | Architecture | Tooling | Workflow]
-    what: "[Specific success]"
+    what: "[What worked well in your domain]"
     impact: "[Why this mattered]"
     
 improvements:
   - category: [Testing | Architecture | Tooling | Workflow | Templates]
     what: "[What could be better]"
-    why: "[Root cause or pain point]"
-    suggestion: "[Proposed improvement]"
+    why: "[Root cause - why did we miss this]"
+    suggestion: "[Specific improvement to prevent this]"
     scope: [this-story | all-stories]
     priority: [high | medium | low]
+\`\`\`
+
+Focus on: [Domain-specific prompts for this agent]`
+})
 ```
 
-**Request input from**:
-- TDD Specialist
-- Fullstack Engineer
-- Playwright Specialist
-- Code Quality Auditor
-- Feature Lead
+**Agents to consult** (via `runSubagent`):
+- **tdd-specialist**: Test discipline, TDD workflow, coverage gaps
+- **fullstack-engineer**: Implementation experience, integration challenges, tooling needs
+- **playwright-specialist**: E2E testing, integration validation, test automation
+- **code-quality-auditor**: Quality gates, audit scope, production readiness
+- **feature-lead**: Process, DoD, delegation, coordination
+
+**Benefits of subagent consultation**:
+- ✅ Structured, consistent feedback format
+- ✅ Each agent reflects from their domain expertise
+- ✅ Captures domain-specific learnings not visible to facilitator
+- ✅ Prevents forgetting to gather input from key contributors
+- ✅ Enables deep reflection with targeted prompts
+
+**Example from US-001 (birdmate)**:
+- Consulted all 5 agents as subagents
+- Each provided YAML feedback with 3-7 improvement suggestions
+- Identified unanimous root cause: "Tests Pass" ≠ "Works Integrated"
+- Created comprehensive handoff spec from synthesized feedback
 
 ### 3. Consolidate Learnings
 Synthesize feedback into themes:

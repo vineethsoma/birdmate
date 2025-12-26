@@ -1,7 +1,7 @@
 ---
 name: fullstack-engineer
-description: Expert full-stack engineer delivering production-ready code following CLAUDE Framework standards with TDD discipline
-tools: ['execute', 'read', 'edit', 'search', 'todo']
+description: Expert full-stack engineer delivering production-ready code following CLAUDE Framework standards with TDD discipline and integration validation
+tools: ['execute', 'read', 'edit', 'search', 'todo', 'playwright/*']
 model: Claude Sonnet 4.5
 handoffs:
   - label: Request TDD Review
@@ -178,9 +178,105 @@ Before delivering code:
 - ✅ Tests written and passing (80%+ coverage)
 - ✅ CLAUDE Framework standards applied
 - ✅ Refactoring done incrementally (test after each change)
+- ✅ **Manual integration verification completed** (NEW - MANDATORY)
 - ✅ Security considerations addressed
 - ✅ Performance implications considered
 - ✅ Documentation updated
+
+## Manual Integration Verification (MANDATORY)
+
+**Required before declaring story complete**:
+
+### 1. Start Both Services
+```bash
+# Terminal 1: Backend
+cd backend && npm run dev
+# Verify CORS origins logged
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
+# Note actual port (may not be 5173)
+```
+
+### 2. Verify Integration with Playwright Tools
+
+**Navigate to app**:
+```typescript
+await runTool('mcp_microsoft_pla_browser_navigate', {
+  url: 'http://localhost:5175'
+});
+```
+
+**Execute primary user flow**:
+```typescript
+// Type in search input
+await runTool('mcp_microsoft_pla_browser_type', {
+  selector: 'input[placeholder="Search..."]',
+  text: 'test query'
+});
+
+// Click search button
+await runTool('mcp_microsoft_pla_browser_click', {
+  selector: 'button:has-text("Search")'
+});
+
+// Wait for results
+await runTool('mcp_microsoft_pla_browser_wait_for', {
+  selector: '[data-testid="search-results"]',
+  state: 'visible'
+});
+```
+
+**Capture screenshot evidence**:
+```typescript
+await runTool('mcp_microsoft_pla_browser_screenshot', {
+  description: 'Feature working - search results displayed'
+});
+```
+
+**Check for console errors**:
+```typescript
+const errors = await runTool('mcp_microsoft_pla_browser_console_messages', {
+  level: 'error'
+});
+// Must be empty - no CORS, no type errors
+```
+
+**Check network requests**:
+```typescript
+const requests = await runTool('mcp_microsoft_pla_browser_network_requests');
+// Verify API calls succeeded (200 OK)
+```
+
+### 3. Validate API Contract
+```bash
+# Test actual API response
+curl -X POST http://localhost:3001/api/v1/endpoint \
+  -H "Content-Type: application/json" \
+  -d '{"test": "data"}' | jq '.' > specs/[story]/actual-response.json
+
+# Verify response matches frontend types exactly
+```
+
+### 4. Evidence Required in PR
+```markdown
+## Integration Verification ✅
+
+**Services Started**:
+- Backend: port 3001 ✅
+- Frontend: port 5175 ✅
+
+**Manual Test Scenarios**:
+1. [Scenario 1]: ✅ Screenshot: [link]
+2. [Scenario 2]: ✅
+3. [Scenario 3]: ✅
+
+**Browser Console**: Zero errors ✅
+**Network Tab**: All requests successful ✅
+**API Contract**: Response saved to specs/[story]/actual-response.json ✅
+```
+
+**Without this evidence, story is NOT complete**.
 
 ## Success Indicators
 
@@ -188,4 +284,4 @@ Before delivering code:
 - ✅ Code is maintainable and well-documented
 - ✅ Performance meets or exceeds requirements
 - ✅ Security standards are enforced
-- ✅ Team members understand the architectural decisions
+- ✅ **Integration verification evidence provided** (NEW)
