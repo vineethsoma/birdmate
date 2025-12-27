@@ -63,9 +63,9 @@ export function validateSearchQuery(query: string): { valid: boolean; error?: st
  */
 export function sanitizeRequestBody(req: Request, _res: Response, next: NextFunction): void {
   if (req.body && typeof req.body === 'object') {
-    const sanitized: Record<string, unknown> = {};
+    const sanitized: Record<string, string | number | boolean> = {};
     
-    for (const [key, value] of Object.entries(req.body)) {
+    for (const [key, value] of Object.entries(req.body as Record<string, unknown>)) {
       if (typeof value === 'string') {
         sanitized[key] = sanitizeString(value);
       } else if (typeof value === 'number' || typeof value === 'boolean') {

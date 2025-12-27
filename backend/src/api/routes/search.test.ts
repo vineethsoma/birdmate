@@ -8,8 +8,8 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import supertest from 'supertest';
 import type { Express } from 'express';
 
-// Mock OpenAI before any imports - generate pseudo-random embeddings based on input
-vi.mock('openai', () => {
+// Mock embeddings module directly - bypasses OPENAI_API_KEY check
+vi.mock('../../utils/embeddings.js', () => {
   // Simple hash function to create deterministic embeddings from text
   const hashCode = (str: string): number => {
     let hash = 0;
@@ -22,27 +22,23 @@ vi.mock('openai', () => {
   };
 
   return {
-    default: vi.fn().mockImplementation(() => ({
-      embeddings: {
-        create: vi.fn().mockImplementation((params: any) => {
-          const input = params.input.toLowerCase();
-          const seed = hashCode(input);
-          
-          // Generate deterministic pseudo-random embedding
-          const embedding = new Array(1536).fill(0).map((_, i) => {
-            // Use seed + index for pseudo-randomness
-            const value = Math.sin(seed + i * 0.1) * 0.5 + 0.5;
-            return value;
-          });
-          
-          return Promise.resolve({
-            data: [{ embedding, index: 0 }],
-            model: 'text-embedding-3-small',
-            usage: { prompt_tokens: input.split(' ').length, total_tokens: input.split(' ').length }
-          });
-        })
-      }
-    }))
+    generateEmbedding: vi.fn().mockImplementation((text: string) => {
+      const input = text.toLowerCase();
+      const seed = hashCode(input);
+      
+      // Generate deterministic pseudo-random embedding
+      const embedding = new Array(1536).fill(0).map((_, i) => {
+        // Use seed + index for pseudo-randomness
+        const value = Math.sin(seed + i * 0.1) * 0.5 + 0.5;
+        return value;
+      });
+      
+      return Promise.resolve({
+        embedding,
+        model: 'text-embedding-3-small',
+        tokens: text.split(' ').length
+      });
+    })
   };
 });
 

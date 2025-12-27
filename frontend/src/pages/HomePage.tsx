@@ -35,8 +35,8 @@ export const HomePage: React.FC = () => {
   };
 
   const handleBirdClick = (birdId: string) => {
-    // TODO: Navigate to bird detail page
-    console.log('Navigate to bird:', birdId);
+    // TODO: Navigate to bird detail page when detail view implemented
+    void birdId; // Acknowledge parameter until detail page exists
   };
 
   return (

@@ -7,14 +7,20 @@
 import 'dotenv/config';
 import OpenAI from 'openai';
 
-// Validate API key on startup (S-2)
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY environment variable is required');
-}
+// Lazy initialization - only validate when needed (allows tests to run without API key)
+let openaiClient: OpenAI | null = null;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getOpenAIClient(): OpenAI {
+  if (!openaiClient) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is required');
+    }
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openaiClient;
+}
 
 export interface EmbeddingResult {
   embedding: number[];
@@ -36,6 +42,8 @@ export async function generateEmbedding(text: string): Promise<EmbeddingResult> 
     throw new Error('Text cannot be empty');
   }
   
+  const openai = getOpenAIClient(); // Get client lazily
+  
   try {
     const response = await openai.embeddings.create({
       model: 'text-embedding-3-small',
@@ -43,13 +51,18 @@ export async function generateEmbedding(text: string): Promise<EmbeddingResult> 
       encoding_format: 'float',
     });
     
+    if (!response.data[0]?.embedding) {
+      throw new Error('No embedding returned from OpenAI');
+    }
+    
     return {
       embedding: response.data[0].embedding,
       model: response.model,
       tokens: response.usage.prompt_tokens,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Add context to error (E-4)
-    throw new Error(`Failed to generate embedding: ${error.message}`, { cause: error });
+    const err = error as Error;
+    throw new Error(`Failed to generate embedding: ${err.message}`, { cause: error });
   }
 }

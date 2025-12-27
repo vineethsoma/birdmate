@@ -66,22 +66,13 @@ export default defineConfig({
   ],
 
   // Start dev servers before running tests
-  webServer: [
-    {
-      command: 'cd backend && npm run dev',
-      url: 'http://localhost:3001',
-      timeout: 120000,
-      reuseExistingServer: !process.env.CI,
-      stdout: 'pipe',
-      stderr: 'pipe',
-    },
-    {
-      command: 'cd frontend && npm run dev',
-      url: 'http://localhost:5173',
-      timeout: 120000,
-      reuseExistingServer: !process.env.CI,
-      stdout: 'pipe',
-      stderr: 'pipe',
-    },
-  ],
+  // Note: Playwright's webServer array has a known limitation where only the first
+  // server starts reliably. See: https://github.com/microsoft/playwright/issues/8206
+  // Workaround: Start both servers manually, then let Playwright use them.
+  // For CI: servers are pre-started by the workflow.
+  // For local: Start servers manually before running tests:
+  //   Terminal 1: cd backend && npm run dev
+  //   Terminal 2: cd frontend && npm run dev
+  //   Terminal 3: npx playwright test
+  webServer: undefined,
 });
