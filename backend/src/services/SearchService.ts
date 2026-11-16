@@ -7,6 +7,7 @@
 import { randomUUID, createHash } from 'crypto';
 import { generateEmbedding } from '../utils/embeddings.js';
 import { BirdService } from './BirdService.js';
+import { AmbiguityDetector, ambiguityMessage, loadTaxonomyNames } from '../utils/ambiguity.js';
 
 // Search configuration constants
 const QUERY_MIN_LENGTH = 3;
@@ -28,10 +29,43 @@ export interface SearchResponse {
   results: SearchResultItem[];
   totalCount: number;
   queryId: string;
+  /** Present when the query is ambiguous (Principle II) */
+  message?: string;
 }
 
+/**
+ * Audit trail entry, one per executed search (Constitution Principle IV).
+ * The raw query text is never logged (PII); only its hash and length.
+ */
+export interface AuditEntry {
+  timestamp: string;
+  event: 'search';
+  queryId: string;
+  queryHash: string;
+  queryLength: number;
+  resultCount: number;
+  /** Top-3 results with confidence scores */
+  topResults: { id: string; score: number }[];
+  ambiguous: boolean;
+  failed: boolean;
+}
+
+export type AuditSink = (entry: AuditEntry) => void;
+
+const defaultAuditSink: AuditSink = entry => console.log(JSON.stringify(entry));
+
 export class SearchService {
-  constructor(private birdService: BirdService) {}
+  private ambiguity: AmbiguityDetector | null = null;
+
+  constructor(
+    private birdService: BirdService,
+    private auditSink: AuditSink = defaultAuditSink
+  ) {}
+
+  private getAmbiguityDetector(): AmbiguityDetector {
+    this.ambiguity ??= new AmbiguityDetector(loadTaxonomyNames() ?? this.birdService.listCommonNames?.() ?? []);
+    return this.ambiguity;
+  }
 
   /**
    * Perform semantic search for birds
@@ -49,57 +83,65 @@ export class SearchService {
     
     // Generate unique query ID for audit trail
     const queryId = randomUUID();
-    
-    // Log query (Constitution Principle IV - audit trail)
-    // Hash query to prevent PII leakage (L-5)
-    const queryHash = createHash('sha256').update(cleanedQuery).digest('hex').slice(0, 16);
-    console.log(JSON.stringify({
+
+    // Audit entry (Constitution Principle IV). Hash query to prevent PII leakage (L-5)
+    const entry: AuditEntry = {
       timestamp: new Date().toISOString(),
       event: 'search',
       queryId,
-      queryHash,
+      queryHash: createHash('sha256').update(cleanedQuery).digest('hex').slice(0, 16),
       queryLength: cleanedQuery.length,
-    }));
-    
-    // Generate embedding
-    const { embedding, model, tokens } = await generateEmbedding(cleanedQuery);
-    
-    // Perform similarity search with minimum score threshold
-    const searchResults = this.birdService.searchBySimilarity(
-      embedding,
-      DEFAULT_RESULT_LIMIT,
-      MIN_SIMILARITY_THRESHOLD
-    );
-    
-    if (searchResults.length === 0) {
-      return {
-        results: [],
-        totalCount: 0,
-        queryId,
-      };
-    }
-    
-    // Fetch full bird details with images
-    const birdIds = searchResults.map(r => r.id);
-    const birdsWithImages = this.birdService.getBulkWithImages(birdIds);
-    
-    // Merge search scores with bird data
-    const scoreMap = new Map(searchResults.map(r => [r.id, r.score]));
-    
-    const results: SearchResultItem[] = birdsWithImages.map(bird => ({
-      id: bird.id,
-      commonName: bird.commonName,
-      scientificName: bird.scientificName,
-      score: Math.round((scoreMap.get(bird.id) || 0) * 100) / 100, // Round to 2 decimals
-      thumbnailUrl: bird.thumbnailUrl,
-      fieldMarks: this.extractFieldMarks(bird.description),
-    }));
-    
-    return {
-      results,
-      totalCount: results.length,
-      queryId,
+      resultCount: 0,
+      topResults: [],
+      ambiguous: false,
+      failed: true,
     };
+
+    try {
+      const ambiguous = this.getAmbiguityDetector().find(cleanedQuery);
+      const message = ambiguous.length > 0 ? ambiguityMessage(ambiguous) : undefined;
+      entry.ambiguous = ambiguous.length > 0;
+
+      // Generate embedding
+      const { embedding } = await generateEmbedding(cleanedQuery);
+
+      // Perform similarity search with minimum score threshold
+      const searchResults = this.birdService.searchBySimilarity(
+        embedding,
+        DEFAULT_RESULT_LIMIT,
+        MIN_SIMILARITY_THRESHOLD
+      );
+
+      let results: SearchResultItem[] = [];
+      if (searchResults.length > 0) {
+        // Fetch full bird details with images
+        const birdIds = searchResults.map(r => r.id);
+        const birdsWithImages = this.birdService.getBulkWithImages(birdIds);
+
+        // Merge search scores with bird data
+        const scoreMap = new Map(searchResults.map(r => [r.id, r.score]));
+
+        results = birdsWithImages.map(bird => ({
+          id: bird.id,
+          commonName: bird.commonName,
+          scientificName: bird.scientificName,
+          score: Math.round((scoreMap.get(bird.id) || 0) * 100) / 100, // Round to 2 decimals
+          thumbnailUrl: bird.thumbnailUrl,
+          fieldMarks: this.extractFieldMarks(bird.description),
+        }));
+      }
+
+      entry.resultCount = results.length;
+      entry.topResults = results.slice(0, 3).map(r => ({ id: r.id, score: r.score }));
+      entry.failed = false;
+
+      const response: SearchResponse = { results, totalCount: results.length, queryId };
+      if (message) response.message = message;
+      return response;
+    } finally {
+      // Failed queries are logged too, to find index gaps (Principle IV)
+      this.auditSink(entry);
+    }
   }
 
   /**

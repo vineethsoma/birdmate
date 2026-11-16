@@ -10,8 +10,8 @@ import { getDatabase, transaction } from '../client.js';
 /**
  * Execute SQL delete and return count of deleted rows
  */
-function deleteAndCount(db: any, sql: string): number {
-  const result = db.prepare(sql).run();
+function deleteAndCount(db: any, sql: string, params: unknown[] = []): number {
+  const result = db.prepare(sql).run(...params);
   return result.changes;
 }
 
@@ -29,7 +29,7 @@ export async function filterNASpecies(): Promise<void> {
     const beforeCount = db.prepare('SELECT COUNT(*) as count FROM birds').get() as { count: number };
     console.log(`📊 Initial count: ${beforeCount.count} species\n`);
     
-    await transaction(db, () => {
+    await transaction(() => {
       // 1. Delete by geographic indicators in common name
       console.log('1️⃣  Removing species by geographic indicators...');
       

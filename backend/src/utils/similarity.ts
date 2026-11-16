@@ -33,7 +33,7 @@ export function cosineSimilarity(v1: number[], v2: number[]): number {
   }
   
   // Calculate dot product
-  const dotProduct = v1.reduce((sum, val, i) => sum + val * v2[i], 0);
+  const dotProduct = v1.reduce((sum, val, i) => sum + val * (v2[i] ?? 0), 0);
   
   // Calculate magnitudes
   const magnitude1 = Math.sqrt(v1.reduce((sum, val) => sum + val ** 2, 0));

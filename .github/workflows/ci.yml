@@ -5,6 +5,11 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      verify_runs:
+        description: 'Property-test runs for formal verification'
+        default: '2000'
 
 # Cancel in-progress runs when a new run is triggered
 concurrency:
@@ -286,10 +291,107 @@ jobs:
             echo "✅ No console.log statements found"
           fi
 
+  formal-verification:
+    name: Formal Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefix backend
+          npm ci --prefix frontend
+          npm ci --prefix shared
+
+      # Deeper than the local hook (100 runs). Verifiers run offline against a temp copy of the DB.
+      - name: Run formal verification (types, data, contract, property tests)
+        working-directory: ./backend
+        env:
+          VERIFY_RUNS: ${{ github.event.inputs.verify_runs || '2000' }}
+        run: |
+          set -o pipefail
+          npm run verify:all -- --runs "$VERIFY_RUNS" 2>&1 | tee ../verify.log
+
+      - name: Summarize counterexample
+        if: failure()
+        run: |
+          {
+            echo "### ❌ Formal verification failed"
+            echo '```'
+            grep -vE '^\s+at ' verify.log | tail -60
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload verification log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-log
+          path: verify.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # Optional repair loop: when verification fails on a same-repo PR, Claude fixes the
+  # implementation (never the formal spec: protected by .claude/hooks and CODEOWNERS).
+  # Enable by setting the repository variable CLAUDE_REPAIR_ENABLED=true and the
+  # ANTHROPIC_API_KEY secret.
+  repair:
+    name: Claude Repair (optional)
+    runs-on: ubuntu-latest
+    needs: [formal-verification]
+    if: >-
+      failure() && needs.formal-verification.result == 'failure' &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'github-actions[bot]' && vars.CLAUDE_REPAIR_ENABLED == 'true'
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Download verification log
+        uses: actions/download-artifact@v4
+        with:
+          name: verify-log
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefix backend
+          npm ci --prefix frontend
+          npm ci --prefix shared
+
+      - name: Repair with Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Verification failed. Read verify.log, fix backend/frontend (not the formal/ directory), push a commit.
+            The formal/ directory is the read-only spec: if an invariant looks wrong, explain why in a PR comment instead of changing it.
+            Re-run `npm run verify:all -- --runs 200` in backend/ before pushing.
+          claude_args: --max-turns 15
+
   ci-success:
     name: CI Success
     runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests, integration-tests, e2e-tests, quality-checks]
+    needs: [backend-tests, frontend-tests, integration-tests, e2e-tests, quality-checks, formal-verification]
     if: always()
     
     steps:
@@ -315,6 +417,10 @@ jobs:
             echo "❌ Quality checks failed"
             exit 1
           fi
+          if [ "${{ needs.formal-verification.result }}" != "success" ]; then
+            echo "❌ Formal verification failed"
+            exit 1
+          fi
           echo "✅ All CI checks passed!"
       
       - name: Generate CI summary
@@ -328,5 +434,6 @@ jobs:
           echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| E2E Tests | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Quality Checks | ${{ needs.quality-checks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Formal Verification | ${{ needs.formal-verification.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**All checks must pass for PR to be mergeable.**" >> $GITHUB_STEP_SUMMARY

@@ -43,8 +43,13 @@ export async function generateEmbedding(text: string): Promise<EmbeddingResult> 
       encoding_format: 'float',
     });
     
+    const first = response.data[0];
+    if (!first) {
+      throw new Error('Embeddings API returned no data');
+    }
+
     return {
-      embedding: response.data[0].embedding,
+      embedding: first.embedding,
       model: response.model,
       tokens: response.usage.prompt_tokens,
     };

@@ -77,6 +77,18 @@ export class BirdService {
   }
 
   /**
+   * List id + common name of every species in the database (used for ambiguity
+   * detection: a name is ambiguous relative to the taxonomy, not just to the
+   * species that currently have an embedding)
+   */
+  listCommonNames(): { id: string; commonName: string }[] {
+    const rows = this.db
+      .prepare('SELECT id, common_name FROM birds')
+      .all() as { id: string; common_name: string }[];
+    return rows.map(r => ({ id: r.id, commonName: r.common_name }));
+  }
+
+  /**
    * Search birds by similarity to query embedding
    * @param queryEmbedding - Query vector (1536 dimensions)
    * @param limit - Maximum number of results (1-100)

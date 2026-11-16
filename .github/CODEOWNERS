@@ -1,0 +1,7 @@
+# Spec changes need maintainer approval (constitution: Governance).
+# The formal spec, the verification gate and the agent hooks are human-owned.
+/formal/                @vineethsoma
+/backend/verify/        @vineethsoma
+/.claude/               @vineethsoma
+/.github/workflows/     @vineethsoma
+/.github/CODEOWNERS     @vineethsoma

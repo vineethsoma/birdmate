@@ -71,6 +71,30 @@ describe('errorHandler', () => {
     }
   });
 
+  describe('body-parser client errors', () => {
+    it('maps malformed JSON (status 400) to a 400 error body, not a 500', () => {
+      const err = Object.assign(new SyntaxError('Unexpected token'), { status: 400, type: 'entity.parse.failed' });
+
+      errorHandler(err, mockReq as Request, mockRes as Response, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: { code: 'INVALID_REQUEST_BODY', message: 'Request body must be valid JSON' },
+      });
+    });
+
+    it('maps oversized bodies (status 413) to PAYLOAD_TOO_LARGE', () => {
+      const err = Object.assign(new Error('request entity too large'), { status: 413 });
+
+      errorHandler(err, mockReq as Request, mockRes as Response, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(413);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: { code: 'PAYLOAD_TOO_LARGE', message: 'Request body is too large' },
+      });
+    });
+  });
+
   describe('AppError handling', () => {
     it('should handle AppError with all fields', () => {
       const err = new AppError('VALIDATION_ERROR', 'Invalid input', 400, 'email');

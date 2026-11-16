@@ -53,6 +53,20 @@ export function errorHandler(
     return;
   }
   
+  // Client errors raised by body-parser (malformed JSON, non-object JSON, oversized body)
+  // are the caller's fault: 4xx, never 5xx.
+  const clientStatus = (err as { status?: unknown }).status;
+  if (typeof clientStatus === 'number' && clientStatus >= 400 && clientStatus < 500) {
+    const tooLarge = clientStatus === 413;
+    res.status(clientStatus).json({
+      error: {
+        code: tooLarge ? 'PAYLOAD_TOO_LARGE' : 'INVALID_REQUEST_BODY',
+        message: tooLarge ? 'Request body is too large' : 'Request body must be valid JSON',
+      },
+    });
+    return;
+  }
+
   // Handle unknown errors (don't leak details in production)
   const isDevelopment = process.env.NODE_ENV === 'development';
   

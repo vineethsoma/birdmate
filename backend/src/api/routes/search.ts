@@ -66,7 +66,7 @@ router.post('/search', async (req: Request, res: Response) => {
     console.error('Search error:', {
       error: error.message,
       stack: error.stack,
-      queryLength: query?.length || 0,
+      queryLength: typeof req.body?.query === 'string' ? req.body.query.length : 0,
     });
     res.status(500).json({
       error: {

@@ -427,4 +427,48 @@ Try interactive docs: http://localhost:3000/api-docs (Swagger UI)
 
 ---
 
+## ✅ Formal Verification Loop
+
+Taxonomy and search invariants are executable. The spec is read-only for agents; verifiers check the implementation against it.
+
+| Piece | Location |
+|-------|----------|
+| Ontology (species, families, names, ambiguity) derived from `database/ebird-taxonomy.csv` | `formal/ontology.ts` |
+| Invariants (search, audit trail, API contract, data) | `formal/invariants.ts` |
+| Verifiers (Vitest + fast-check) | `backend/verify/` |
+| Claude Code hooks and verifier subagent | `.claude/settings.json`, `.claude/hooks/`, `.claude/agents/verifier.md` |
+| CI gate + optional Claude repair job | `.github/workflows/ci.yml` (`formal-verification`, `repair`) |
+
+```bash
+cd backend
+npm run verify:fast                  # types + HTTP contract (seconds)
+npm run verify:all                   # types, data, contract, property tests (100 runs)
+npm run verify:all -- --runs 2000    # deeper (CI default)
+npm run verify:pbt                   # or verify:types | verify:data | verify:contract
+```
+
+Verifiers need no network or API key: embeddings are replaced by a deterministic offline stand-in, and the tracked
+SQLite DB is copied to a temp dir first, so `backend/database/*.db` is never modified.
+
+On failure you get the violated invariant, its constitution principle and a shrunk counterexample:
+
+```
+❌ ambiguityFlagged violated (principle II): a query mentioning an ambiguous common name ...
+   query:   "robin john.doe@example.com"
+   results: [giacou1 (0.98), ...]
+   message: undefined
+```
+
+**Claude Code behavior:** edits to the spec directory and `.claude/hooks` are blocked (PreToolUse); `verify:fast` runs
+after each source edit (PostToolUse); a turn cannot end while `verify:all` fails (Stop; 3 retries, then CI is the backstop).
+Tune with `BIRDMATE_VERIFY_RUNS` and `BIRDMATE_VERIFY_MAX_RETRIES`.
+
+**Changing the spec:** edit it by hand in a PR; `CODEOWNERS` requires maintainer approval. A new invariant added to
+`searchInvariants`, `auditInvariants`, `errorInvariants` or `dataInvariants` is picked up by the verifiers automatically.
+
+**Repair job:** set repo variable `CLAUDE_REPAIR_ENABLED=true` and secret `ANTHROPIC_API_KEY` to let CI ask Claude to fix a failing PR.
+Make **CI Success** a required status check so failures block merge.
+
+---
+
 **Questions?** Review [spec.md](spec.md), [data-model.md](data-model.md), or [research.md](research.md).

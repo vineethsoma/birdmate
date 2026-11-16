@@ -14,7 +14,13 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "db:migrate": "tsx src/db/migrations/run.ts",
     "db:seed": "tsx src/db/seeds/run-all.ts",
-    "db:seed:embeddings": "tsx src/db/seeds/generate-embeddings.ts"
+    "db:seed:embeddings": "tsx src/db/seeds/generate-embeddings.ts",
+    "verify:types": "node verify/run.mjs types",
+    "verify:data": "vitest run -c vitest.verify.config.ts verify/data.verify.ts",
+    "verify:pbt": "vitest run -c vitest.verify.config.ts verify/pbt.verify.ts",
+    "verify:contract": "vitest run -c vitest.verify.config.ts verify/contract.verify.ts",
+    "verify:fast": "node verify/run.mjs fast",
+    "verify:all": "node verify/run.mjs all"
   },
   "dependencies": {
     "better-sqlite3": "^11.0.0",
@@ -40,6 +46,7 @@
     "@typescript-eslint/parser": "^6.18.0",
     "@vitest/coverage-v8": "^2.1.0",
     "eslint": "^8.56.0",
+    "fast-check": "^3.23.2",
     "prettier": "^3.1.1",
     "supertest": "^7.1.4",
     "tsx": "^4.7.0",
